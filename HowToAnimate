@@ -3,7 +3,7 @@
 let animate = [];
 let preX = 0;
 let preY = 0;
-let ANIMATING = false;
+let ANIMATING = false; // This is a global variable to tell us if we are animating
 
 function setup() {
   createCanvas(600, 600);
@@ -54,7 +54,7 @@ function animateE(x1, y1, x2, y2) {
     let x = map(t, 0, 1, x1, x2);
     let y = map(t, 0, 1, y1, y2);
     animate.push({x: x, y: y});
-
+    // You can adjust the animation time here
     t += 0.02;
   }
   console.log(animate.length);
