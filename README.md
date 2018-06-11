@@ -1,7 +1,7 @@
 # Checkers
 This is classic checkers with an interactive UI.
 
-### Features: 
+### Features:
 - Move generator for each player
   - Players must jump if they can
     - If player jumps, they must continue jumping with that piece
@@ -27,7 +27,8 @@ This is classic checkers with an interactive UI.
 - Let the players enter their name to play
 - Let the players select their color
 - End the game after a tie (150 moves and still no winner)
-- Create button to restart game 
+- Create button to restart game
 - Make background larger, but board size the same
 - Create socket for players to play online
 - Create AI for players to play against
+- Show jumped pieces off to the side

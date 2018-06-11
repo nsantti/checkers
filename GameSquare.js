@@ -1,21 +1,21 @@
 class GameSquare {
-  constructor (owner, ownerN, i, j, x, y, r, g, b) {
+  constructor(owner, ownerN, i, j, x, y, r, g, b) {
     this.owner = owner; // Our owner is a player object
     this.ownerN = ownerN; // OwnerN is 0 for no owner, 1 for playerOne, and 2 for playerTwo
     this.row = i;
     this.col = j;
-    this.piece = null;  // We don't have any pieces on us to start
+    this.piece = null; // We don't have any pieces on us to start
     this.pos = createVector(x, y);
-    this.size = 70;
+    this.size = 80;
     this.r = r;
     this.g = g;
     this.b = b;
-    this.inside = false;  // Is the mouse inside our square
+    this.inside = false; // Is the mouse inside our square
     this.highlight = false; // Should we highlight the square? Used for highlighting neighbors
-    this.neighbors = [];  // The legal places we can move to
-    this.king = false;  // Tells us if we are a king
-    this.jumps = [];  // Tells us the jumps we can do
-    this.mustJump = false;  // Tells us if we must jump
+    this.neighbors = []; // The legal places we can move to
+    this.king = false; // Tells us if we are a king
+    this.jumps = []; // Tells us the jumps we can do
+    this.mustJump = false; // Tells us if we must jump
   }
   hasPiece() {
     return (this.piece != null);
@@ -25,7 +25,7 @@ class GameSquare {
 
 GameSquare.prototype.show = function() {
   if (this.inside) {
-      fill(this.r + 40, this.g + 40, this.b + 40);
+    fill(this.r + 40, this.g + 40, this.b + 40);
   } else {
     fill(this.r, this.g, this.b);
   }
@@ -41,11 +41,11 @@ GameSquare.prototype.show = function() {
 
   if (this.piece) { // Draws a circle if there is a piece there
     fill(this.owner.color);
-    ellipse(this.pos.x + this.size/2, this.pos.y + this.size/2, 30, 30);
+    ellipse(this.pos.x + this.size / 2, this.pos.y + this.size / 2, 30, 30);
   }
-  if (this.king) {  // Draws a dot in the center of the circle if we are a king
+  if (this.king) { // Draws a dot in the center of the circle if we are a king
     fill(0);
-    ellipse(this.pos.x + this.size/2, this.pos.y + this.size/2, 5, 5);
+    ellipse(this.pos.x + this.size / 2, this.pos.y + this.size / 2, 5, 5);
   }
 }
 
@@ -58,13 +58,13 @@ GameSquare.prototype.showText = function() {
 GameSquare.prototype.checkInside = function(x, y) {
   // Lets us know if the mouse is currently inside the square
   if (x > this.pos.x && x < this.pos.x + this.size &&
-      y > this.pos.y && y < this.pos.y + this.size) {
-        this.inside = true;
-        return true;
-      } else {
-        this.inside = false;
-        return false;
-      }
+    y > this.pos.y && y < this.pos.y + this.size) {
+    this.inside = true;
+    return true;
+  } else {
+    this.inside = false;
+    return false;
+  }
 }
 
 GameSquare.prototype.addPiece = function(piece) {
@@ -72,12 +72,12 @@ GameSquare.prototype.addPiece = function(piece) {
 }
 
 GameSquare.prototype.generateNeighbors = function(board, mustJump) {
-  this.neighbors = [];  // Resetting the possible jumps and neighbors
+  this.neighbors = []; // Resetting the possible jumps and neighbors
   this.jumps = [];
   if (this.ownerN == 1) { // Player one can move downwards unless they are king
     this.checkUpper(board, this.row, this.col, this.king, mustJump);
     this.checkLower(board, this.row, this.col, true, mustJump);
-  } else if (this.ownerN == 2) {  // Player Two can move upwards unless they are a king
+  } else if (this.ownerN == 2) { // Player Two can move upwards unless they are a king
     this.checkUpper(board, this.row, this.col, true, mustJump);
     this.checkLower(board, this.row, this.col, this.king, mustJump);
   }
@@ -87,13 +87,13 @@ GameSquare.prototype.checkUpper = function(board, row, col, canAccess, mustJump)
   if (canAccess) {
     // Check top left.
     if (row > 0 && col > 0) { // Can we look at this spot on the board?
-      if (board[row-1][col-1].owner == null) { // If it is empty, add to Array
-        this.neighbors.push(board[row-1][col-1]);
-      } else if (board[row-1][col-1].ownerN != this.ownerN) { //If it is taken, and not us, check for a jump
+      if (board[row - 1][col - 1].owner == null) { // If it is empty, add to Array
+        this.neighbors.push(board[row - 1][col - 1]);
+      } else if (board[row - 1][col - 1].ownerN != this.ownerN) { //If it is taken, and not us, check for a jump
         if (row - 2 >= 0 && col - 2 >= 0) {
-          if (board[row-2][col-2].owner == null) {
-            this.neighbors.push(board[row-2][col-2]);
-            this.jumps.push(board[row-2][col-2]);
+          if (board[row - 2][col - 2].owner == null) {
+            this.neighbors.push(board[row - 2][col - 2]);
+            this.jumps.push(board[row - 2][col - 2]);
             if (currentPlayer == this.owner) {
               this.mustJump = true;
             }
@@ -103,13 +103,13 @@ GameSquare.prototype.checkUpper = function(board, row, col, canAccess, mustJump)
     }
     // Check top right.
     if (row > 0 && col < 7) {
-      if (board[row-1][col+1].owner == null) {
-        this.neighbors.push(board[row-1][col+1]);
-      } else if (board[row-1][col+1].ownerN != this.ownerN) {
+      if (board[row - 1][col + 1].owner == null) {
+        this.neighbors.push(board[row - 1][col + 1]);
+      } else if (board[row - 1][col + 1].ownerN != this.ownerN) {
         if (row - 2 >= 0 && col + 2 <= 7) {
-          if (board[row-2][col+2].owner == null) {
-            this.neighbors.push(board[row-2][col+2]);
-            this.jumps.push(board[row-2][col+2]);
+          if (board[row - 2][col + 2].owner == null) {
+            this.neighbors.push(board[row - 2][col + 2]);
+            this.jumps.push(board[row - 2][col + 2]);
             if (currentPlayer == this.owner) {
               this.mustJump = true;
             }
@@ -127,13 +127,13 @@ GameSquare.prototype.checkLower = function(board, row, col, canAccess, mustJump)
   if (canAccess) {
     // Check lower left.
     if (row < 7 && col > 0) {
-      if (board[row+1][col-1].owner == null) { // If it is empty, add to Array
-        this.neighbors.push(board[row+1][col-1]);
-      } else if (board[row+1][col-1].ownerN != this.ownerN) { // If it is taken, and not us, check for a jump
+      if (board[row + 1][col - 1].owner == null) { // If it is empty, add to Array
+        this.neighbors.push(board[row + 1][col - 1]);
+      } else if (board[row + 1][col - 1].ownerN != this.ownerN) { // If it is taken, and not us, check for a jump
         if (row + 2 <= 7 && col - 2 >= 0) {
-          if (board[row+2][col-2].owner == null) {
-            this.neighbors.push(board[row+2][col-2]);
-            this.jumps.push(board[row+2][col-2]);
+          if (board[row + 2][col - 2].owner == null) {
+            this.neighbors.push(board[row + 2][col - 2]);
+            this.jumps.push(board[row + 2][col - 2]);
             if (currentPlayer == this.owner) {
               this.mustJump = true;
             }
@@ -143,13 +143,13 @@ GameSquare.prototype.checkLower = function(board, row, col, canAccess, mustJump)
     }
     // Check lower right.
     if (row < 7 && col < 7) {
-      if (board[row+1][col+1].owner == null) {
-        this.neighbors.push(board[row+1][col+1]);
-      } else if (board[row+1][col+1].ownerN != this.ownerN) {
+      if (board[row + 1][col + 1].owner == null) {
+        this.neighbors.push(board[row + 1][col + 1]);
+      } else if (board[row + 1][col + 1].ownerN != this.ownerN) {
         if (row + 2 <= 7 && col + 2 <= 7) {
-          if (board[row+2][col+2].owner == null) {
-            this.neighbors.push(board[row+2][col+2]);
-            this.jumps.push(board[row+2][col+2]);
+          if (board[row + 2][col + 2].owner == null) {
+            this.neighbors.push(board[row + 2][col + 2]);
+            this.jumps.push(board[row + 2][col + 2]);
             if (currentPlayer == this.owner) {
               this.mustJump = true;
             }
@@ -189,9 +189,9 @@ GameSquare.prototype.unHighLightJumps = function() {
 }
 
 GameSquare.prototype.highlightSquare = function() {
-    this.highlight = true;
+  this.highlight = true;
 }
 
 GameSquare.prototype.unHighlightSquare = function() {
-    this.highlight = false;
+  this.highlight = false;
 }
