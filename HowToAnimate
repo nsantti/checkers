@@ -1,0 +1,67 @@
+# How to animate a circle
+
+let animate = [];
+let preX = 0;
+let preY = 0;
+let ANIMATING = false;
+
+function setup() {
+  createCanvas(600, 600);
+  background(55);
+
+}
+
+function draw() {
+  background(55);
+  drawAnimation(frameCount % animate.length);
+  fill(255);
+  if (!ANIMATING) {
+    ellipse(preX, preY, 25);
+  }
+
+
+}
+
+function drawAnimation(index) {
+  if (animate.length == 0) {
+    ANIMATING = false;
+    return;
+  }
+  if (index == animate.length -1) {
+    animate = [];
+    ANIMATING = false;
+    return;
+  }
+  sleep(20);
+  ellipse(animate[index].x, animate[index].y, 25);
+}
+
+function mousePressed() {
+  if (!ANIMATING) {
+    animateE(preX, preY, mouseX, mouseY);
+    preX = mouseX;
+    preY = mouseY;
+  }
+
+}
+
+function animateE(x1, y1, x2, y2) {
+  ANIMATING = true;
+  let t = 0;
+  animate = [];
+  while (t < 1) {
+    fill(255);
+    let x = map(t, 0, 1, x1, x2);
+    let y = map(t, 0, 1, y1, y2);
+    animate.push({x: x, y: y});
+
+    t += 0.02;
+  }
+  console.log(animate.length);
+}
+
+function sleep(miliseconds) {
+   var currentTime = new Date().getTime();
+
+   while (currentTime + miliseconds >= new Date().getTime());
+}
