@@ -1,5 +1,5 @@
 # Checkers
-This is classic checkers with an interactive UI.
+This is classic checkers with an interactive UI. ***NOTE*** Must use p5js library: <a href="https://p5js.org/download/">p5js</a>
 
 ### Features:
 - Move generator for each player
@@ -32,3 +32,8 @@ This is classic checkers with an interactive UI.
 - Create socket for players to play online
 - Create AI for players to play against
 - Show jumped pieces off to the side
+
+### Updates made
+- 6/11/18
+  - Made background larger
+  -
