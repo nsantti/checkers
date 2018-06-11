@@ -6,7 +6,9 @@ This is classic checkers with an interactive UI.
   - Players must jump if they can
     - If player jumps, they must continue jumping with that piece
     - If player jumps and then becomes a king, they must continue jumping if possible
+    - If player jumps, only the piece that jumps has moves generated
   - Button to highlight all legal moves for each player
+  - Moves are generated after player turn ends
 - Visual appeal
   - Squares are highlighted when the mouse is in them
   - Pieces that must jump are highlighted
@@ -18,6 +20,7 @@ This is classic checkers with an interactive UI.
   - Game will tell players who wins
   - Kings are distinguishable from other pieces
 
+
 ### TODO:
 - Animate the pieces once a move is declared
 - Create a start screen
@@ -26,3 +29,5 @@ This is classic checkers with an interactive UI.
 - End the game after a tie (150 moves and still no winner)
 - Create button to restart game 
 - Make background larger, but board size the same
+- Create socket for players to play online
+- Create AI for players to play against
