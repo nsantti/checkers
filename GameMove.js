@@ -1,5 +1,5 @@
 class GameMove {
-  constructor (owner, from, to) {
+  constructor(owner, from, to) {
     this.owner = owner;
     this.from = from;
     this.to = to;
@@ -13,8 +13,7 @@ class GameMove {
     this.to.mustJump = false;
     if (!this.from.king) {
       if ((this.to.row == 7 && this.from.ownerN == 1) ||
-          (this.to.row == 0 && this.from.ownerN == 2)) {
-        console.log("MAKE KING");
+        (this.to.row == 0 && this.from.ownerN == 2)) {
         this.to.king = true;
       }
     } else {

@@ -1,10 +1,11 @@
 class Player {
-  constructor(color) {
+  constructor(color, name) {
     this.pieces = [];
     this.moves = [];
     this.color = color;
     this.won = undefined;
     this.justJumped = false;
+    this.name = name;
   }
 
   mustJump(board) {
