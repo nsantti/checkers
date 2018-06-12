@@ -38,6 +38,7 @@ This is classic checkers with an interactive UI. ***NOTE*** Must use p5js librar
   - Captured pieces are drawn to the side of the board
   - Got rid of redundant code
   
+  
 - 6/11/18
   - Made background larger
   - Made board location dynamic
