@@ -34,6 +34,11 @@ This is classic checkers with an interactive UI. ***NOTE*** Must use p5js librar
 - Show jumped pieces off to the side
 
 ### Updates made
+- 6/12/18
+  - Players now have a list of pieces they've captured
+  - Captured pieces are drawn to the side of the board
+  - Got rid of redundant code
+  
 - 6/11/18
   - Made background larger
   - Made board location dynamic
