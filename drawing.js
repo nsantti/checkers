@@ -1,3 +1,11 @@
+function draw() {
+	background(50);
+	drawBoard();
+	drawPlayerTurn();
+	drawArrow();
+	drawCapturedPieces();
+}
+
 function drawBoard() { // Draw the board. Comment out the 'showText' part if you don't want grid numbers
 	for (let i = 0; i < cols; i++) {
 		for (let j = 0; j < rows; j++) {
@@ -20,7 +28,6 @@ function drawPlayerTurn() { // Draws the player's turn at the bottom of the scre
 		text("Game Over, " + winner + " Won", width / 2, height - 10);
 	}
 
-	textAlign(CENTER);
 	text(playerOne.name, (width - (8 * w)) - 50, height - 45);
 	text(playerTwo.name, width - (width - (8 * w)), height - 45);
 	// Draw the piece next to each player
@@ -121,6 +128,10 @@ function drawCapturedPieces() {
 	playerOne.drawCaptured();
 	playerTwo.drawCaptured();
 }
+
+
+
+
 
 
 
