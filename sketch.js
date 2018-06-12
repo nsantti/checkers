@@ -17,10 +17,9 @@ let currentPlayer; // A way to toggle back and forth between players
 let mustJump; // If a player jumps and can jump again, they must do it
 let canKeepJumping; // Tells us if the player can keep jumping with the piece they jumped with
 let gameOver; // Tells us if the game is over
-let arrows = []; // Keeps track of the arrows for each turn
 
 // This function initializes all of the variables
-function reset() {
+function reset(callback) {
 	rows = 8;
 	cols = 8;
 	board = new Array(cols);
@@ -40,7 +39,6 @@ function reset() {
 	mustJump = false;
 	canKeepJumping = false;
 	gameOver = false;
-	arrows = [];
 	for (let i = 0; i < cols; i++) {
 		board[i] = new Array(rows);
 	}
@@ -69,7 +67,11 @@ function reset() {
 				new GameSquare(null, 0, i, j, j * w + (width - (8 * w)) / 2, i * h + 75, 0, 0, 0);
 		}
 	}
-	mainBoard();
+	if (callback instanceof Function) {
+		callback();
+	} else {
+		mainBoard();
+	}
 	// The following game boards were used for testing purposes
 
 	//  board1(); // Works
@@ -83,23 +85,13 @@ function reset() {
 }
 
 function setup() {
-
 	createCanvas(800, 800);
-	reset();
+	reset(mainBoard);
 	textAlign(CENTER);
-
-
-
 }
 
 
-function draw() {
-	background(50);
-	drawBoard();
-	drawPlayerTurn();
-	drawArrow();
-	drawCapturedPieces();
-}
+
 
 function mousePressed() {
 	// Check if we are inside the gameboard
@@ -109,7 +101,6 @@ function mousePressed() {
 		if (canKeepJumping) { // If we can keep jumping, then only the piece that went can go and it must jump
 			if (currentSquare.hasPiece() && currentSquare.mustJump) {
 				currentSquare.highLightJumps();
-				console.log("must jump again");
 				startMove = currentSquare;
 			}
 		} else {
@@ -123,12 +114,9 @@ function mousePressed() {
 			}
 		}
 	}
-	//console.log(mouseX + ", " + mouseY);
 }
 
 function mouseReleased() {
-
-
 	// Once we let go of the mouse, unhighlight all the legal moves
 	if (currentSquare) {
 		currentSquare.unHighlightNeighbors();
@@ -157,7 +145,6 @@ function mouseReleased() {
 			theMove.doIt(); // Actually doing the move
 			currentPlayer.moves.push(theMove);
 			moves.push(theMove);
-			arrows.push(theMove);
 
 			// If we jumped a piece, remove the one that was jumped.
 			// Then check to see if we can do more jumps
@@ -301,6 +288,13 @@ function makeKing(aSquare) {
 	generateMoves();
 }
 
+function getCurrentPlayer() {
+	return (currentPlayer == playerOne) ? playerOne : playerTwo;
+}
+
+function getOtherPlayer() {
+	return (currentPlayer == playerOne) ? playerTwo : playerOne;
+}
 
 
 

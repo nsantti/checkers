@@ -22,9 +22,8 @@ class Player {
 	}
 
 	// Add a captured piece to the list
-	addCaptured(king = false) {
-		let other = (currentPlayer == playerOne) ? playerTwo : playerOne;
-		this.capturedPieces.push(new SidePiece(other.color, this.capturedPieces.length, king, currentPlayer));
+	addCaptured(king) {
+		this.capturedPieces.push(new SidePiece(getOtherPlayer().color, this.capturedPieces.length, king, currentPlayer));
 	}
 
 	// Draws all of the captured pieces
