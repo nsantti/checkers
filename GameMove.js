@@ -22,11 +22,7 @@ class GameMove {
 		}
 
 		// Making the from square empty
-		this.from.mustJump = false;
-		this.from.piece = null;
-		this.from.owner = null;
-		this.from.ownerN = 0;
-		this.from.king = false;
+		this.from.reset();
 	}
 
 }
