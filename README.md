@@ -27,12 +27,19 @@ This is classic checkers with an interactive UI. ***NOTE*** Must use p5js librar
 - Create a start screen
 - Let the players enter their name to play
 - Let the players select their color
-- End the game after a tie (200 moves and still no winner)
-- Create button to restart game
 - Create socket for players to play online
 - Create AI for players to play against
 
 ### Updates made
+- 6/14/18
+  - Created custom button class
+  - Added game over screen
+    - User can see game stats and play again
+  - Added random move button
+  - Added button to watch computer play
+  - Games end after 200 moves without a winner (TIE)
+  
+  &nbsp;
 - 6/12/18
   - Players now have a list of pieces they've captured
   - Captured pieces are drawn to the side of the board
