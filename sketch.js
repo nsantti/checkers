@@ -109,8 +109,8 @@ function mousePressed() {
 	if (gameOver) {
 		if (playAgain.isInside(mouseX, mouseY)) {
 			reset();
-			return;
 		}
+		return;
 	}
 	if (!gameOver) {
 		if (randomMoveButton.isInside(mouseX, mouseY)) {
