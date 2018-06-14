@@ -165,6 +165,14 @@ GameSquare.prototype.checkLower = function(board, row, col, canAccess, mustJump)
 	}
 }
 
+GameSquare.prototype.reset = function() {
+	this.owner = null;
+	this.ownerN = 0;
+	this.piece = null;
+	this.king = false;
+	this.mustJump = false;
+}
+
 // Will highlight each neighbor of a particular square
 GameSquare.prototype.highlightNeighbors = function() {
 	for (var i = 0; i < this.neighbors.length; i++) {

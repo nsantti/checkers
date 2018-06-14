@@ -17,6 +17,13 @@ let currentPlayer; // A way to toggle back and forth between players
 let mustJump; // If a player jumps and can jump again, they must do it
 let canKeepJumping; // Tells us if the player can keep jumping with the piece they jumped with
 let gameOver; // Tells us if the game is over
+let GAMESTATE; // Tells us where in the game we are
+let liveButtons; // Data structure to keep track of buttons during the game
+let randomMoveButton; // Button to make a random move
+let watchComputerPlay; // Flags the code to make the computer play against itself
+let computerPlayButton; // Button for the user to click on to watch the computer play
+
+
 
 // This function initializes all of the variables
 function reset(callback) {
@@ -39,6 +46,12 @@ function reset(callback) {
 	mustJump = false;
 	canKeepJumping = false;
 	gameOver = false;
+	GAMESTATE = 1;
+	watchComputerPlay = false;
+	liveButtons = [];
+	liveButtons.push(randomMoveButton = new NButton("Make a random move", width / 2 - 240, 10, 160, 50, false));
+	liveButtons.push(computerPlayButton = new NButton("Toggle computer play", width / 2 + 80, 10, 160, 50, false));
+
 	for (let i = 0; i < cols; i++) {
 		board[i] = new Array(rows);
 	}
@@ -67,6 +80,7 @@ function reset(callback) {
 				new GameSquare(null, 0, i, j, j * w + (width - (8 * w)) / 2, i * h + 75, 0, 0, 0);
 		}
 	}
+	initVariables();
 	if (callback instanceof Function) {
 		callback();
 	} else {
@@ -86,14 +100,29 @@ function reset(callback) {
 
 function setup() {
 	createCanvas(800, 800);
-	reset(mainBoard);
+	reset();
 	textAlign(CENTER);
 }
 
-
-
-
 function mousePressed() {
+	// End Game Menu
+	if (gameOver) {
+		if (playAgain.isInside(mouseX, mouseY)) {
+			reset();
+			return;
+		}
+	}
+	if (!gameOver) {
+		if (randomMoveButton.isInside(mouseX, mouseY)) {
+			makeRandomMove();
+			return;
+		}
+		if (computerPlayButton.isInside(mouseX, mouseY)) {
+			watchComputerPlay = !watchComputerPlay;
+			return;
+		}
+	}
+
 	// Check if we are inside the gameboard
 	if (isInBounds(mouseX, mouseY)) {
 		// If we are, highlight the legal moves of the square we are on
@@ -136,43 +165,50 @@ function mouseReleased() {
 				if (!startMove.mustJump) return;
 				if (startMove.mustJump && !startMove.jumps.includes(endMove)) return;
 			}
+			makeMove(startMove, endMove);
 
-			// Making the move
-			let theMove = new GameMove(currentPlayer, startMove, endMove);
-			console.log("Player " + startMove.ownerN + " Moved from (" + startMove.row + ", " +
-				startMove.col + ") to (" + endMove.row + ", " + endMove.col + ")");
-
-			theMove.doIt(); // Actually doing the move
-			currentPlayer.moves.push(theMove);
-			moves.push(theMove);
-
-			// If we jumped a piece, remove the one that was jumped.
-			// Then check to see if we can do more jumps
-			if (jumpedAPiece(theMove)) {
-
-				let square = squareThatWasJumped(theMove);
-				currentPlayer.addCaptured(square.king);
-				updatePieces();
-				removePiece(square);
-				endMove.generateNeighbors(board, false);
-
-				checkForMoreJumps(endMove);
-			}
-			// If we can keep jumping, don't change turns
-			if (!canKeepJumping) {
-				currentPlayer = (currentPlayer == playerOne) ? playerTwo : playerOne;
-				generateMoves();
-			}
 		}
-		// After each move, check to see if the game is over
-		checkGameOver();
 	}
+}
+
+function makeMove(start, stop) {
+	// Making the move
+	let theMove = new GameMove(currentPlayer, startMove, endMove);
+	console.log("Player " + startMove.ownerN + " Moved from (" + startMove.row + ", " +
+		startMove.col + ") to (" + endMove.row + ", " + endMove.col + ")");
+
+	theMove.doIt(); // Actually doing the move
+	currentPlayer.moves.push(theMove);
+	moves.push(theMove);
+
+	// If we jumped a piece, remove the one that was jumped.
+	// Then check to see if we can do more jumps
+	if (jumpedAPiece(theMove)) {
+
+		let square = squareThatWasJumped(theMove);
+		// Each player keeps track of pieces it jumped
+		currentPlayer.addCaptured(square.king);
+		updatePieces();
+		removePiece(square);
+		endMove.generateNeighbors(board, false);
+
+		checkForMoreJumps(endMove);
+	}
+	// If we can keep jumping, don't change turns
+	if (!canKeepJumping) {
+		currentPlayer = (currentPlayer == playerOne) ? playerTwo : playerOne;
+		generateMoves();
+	}
+
+	// After each move, check to see if the game is over
+	checkGameOver();
 }
 
 function checkGameOver() {
 	// If a player has no more pieces or cannot play, they lose
 	let playerOneLost = true;
 	let playerTwoLost = true;
+	// If we find at least one move for each player, game is not over
 	for (let i = 0; i < rows; i++) {
 		for (let j = 0; j < cols; j++) {
 			if (board[i][j].neighbors.length > 0 || board[i][j].jumps.length > 0) {
@@ -193,6 +229,15 @@ function checkGameOver() {
 		playerTwo.won = false;
 		playerOne.won = true;
 	}
+	// Checking for a tie. Ties are when 200 moves occur and still no winner
+	if (!playerOneLost && !playerTwoLost) {
+		if (moves.length >= 200) {
+			gameOver = true;
+		}
+	}
+	if (gameOver) {
+		liveButtons.map(theBut => theBut.hide = true);
+	}
 }
 
 function checkForMoreJumps(aSquare) { // Checkers if a piece can make more jumps
@@ -210,7 +255,33 @@ function updatePieces() {
 	}
 }
 
-
+// Makes a random move for the current player
+function makeRandomMove() {
+	let possibleStarts = [];
+	if (currentPlayer.mustJump(board)) {
+		// Get all squares that must jump
+		for (let i = 0; i < board.length; i++) {
+			for (let j = 0; j < board[i].length; j++) {
+				if (board[i][j].owner == currentPlayer && board[i][j].mustJump) {
+					possibleStarts.push(board[i][j]);
+				}
+			}
+		}
+	} else {
+		for (let i = 0; i < board.length; i++) {
+			for (let j = 0; j < board[i].length; j++) {
+				// Get all square that can move
+				if (board[i][j].owner == currentPlayer && board[i][j].neighbors.length > 0) {
+					possibleStarts.push(board[i][j]);
+				}
+			}
+		}
+	}
+	// Choose a random square to move
+	startMove = random(possibleStarts);
+	endMove = (currentPlayer.mustJump(board)) ? random(startMove.jumps) : random(startMove.neighbors);
+	makeMove(startMove, endMove);
+}
 
 // Checks to see if we became a king the previous turn. Not using
 function madeKing(aMove) {
@@ -260,10 +331,7 @@ function removePiece(aSquare) {
 			aSquare.owner.pieces.splice(i, 1);
 		}
 	}
-	aSquare.owner = null;
-	aSquare.ownerN = 0;
-	aSquare.piece = null;
-	aSquare.king = false;
+	aSquare.reset();
 }
 
 function checkForKings() {
@@ -277,7 +345,6 @@ function checkForKings() {
 					makeKing(square);
 				}
 			}
-
 		}
 	}
 }
