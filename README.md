@@ -9,6 +9,10 @@ This is classic checkers with an interactive UI. ***NOTE*** Must use p5js librar
     - If player jumps, only the piece that jumps has moves generated
   - Button to highlight all legal moves for each player
   - Moves are generated after player turn ends
+- Clickable buttons
+  - Player can click a button to make a random move
+  - Button available to watch a computer play against itself
+  - Game Over screen has a button to play again
 - Visual appeal
   - Squares are highlighted when the mouse is in them
   - Pieces that must jump are highlighted
@@ -20,6 +24,9 @@ This is classic checkers with an interactive UI. ***NOTE*** Must use p5js librar
   - Game will tell players who wins
   - Kings are distinguishable from other pieces
   - Jumped pieces are shown to the side
+  - Game Over screen
+    - Displays the winner
+    - Shows game stats such as how many moves total and number of pieces lost
 
 
 ### TODO:
