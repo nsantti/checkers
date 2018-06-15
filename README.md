@@ -1,5 +1,5 @@
 # Checkers
-This is classic checkers with an interactive UI. ***NOTE*** Must use p5js library: <a href="https://p5js.org/download/">p5js</a>
+This is classic checkers with an interactive UI. ***NOTE*** Must use p5js library: <a href="https://p5js.org/download/ target = "_blank">p5js</a>
 
 ### Features:
 - Move generator for each player
@@ -13,6 +13,7 @@ This is classic checkers with an interactive UI. ***NOTE*** Must use p5js librar
   - Player can click a button to make a random move
   - Button available to watch a computer play against itself
   - Game Over screen has a button to play again
+  - Button to see all available legal moves for current player
 - Visual appeal
   - Squares are highlighted when the mouse is in them
   - Pieces that must jump are highlighted
@@ -38,6 +39,13 @@ This is classic checkers with an interactive UI. ***NOTE*** Must use p5js librar
 - Create AI for players to play against
 
 ### Updates made
+- 6/15/18
+  - Got rid of DOM buttons
+  - Can use the online P5 library now, no need to download it
+  - Created button to highlight all legal moves for current player
+  - Current player can no longer see moves for other player
+  
+  &nbsp;
 - 6/14/18
   - Created custom button class
   - Added game over screen
