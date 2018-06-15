@@ -1,5 +1,5 @@
 # Checkers
-This is classic checkers with an interactive UI. ***NOTE*** Must use p5js library: <a href="https://p5js.org/download/ target = "_blank">p5js</a>
+This is classic checkers with an interactive UI. ***NOTE*** Must use p5js library: <a href="https://p5js.org/download/ target="_blank">p5js</a>
 
 ### Features:
 - Move generator for each player
