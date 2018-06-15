@@ -6,8 +6,7 @@ let h; // Size of the height of the game square
 let currentSquare; // Tells us what square the user selected
 let from; // What square we came from
 let to; // What square we are going to
-let p1movesButton;
-let p2movesButton;
+let showMovesButton; // Button to highlight all the legal moves for the current player
 let startMove; // The starting square for a gamemove
 let endMove; // The ending square for a gamemove
 let moves = []; // Keeps track of each move
@@ -22,6 +21,7 @@ let liveButtons; // Data structure to keep track of buttons during the game
 let randomMoveButton; // Button to make a random move
 let watchComputerPlay; // Flags the code to make the computer play against itself
 let computerPlayButton; // Button for the user to click on to watch the computer play
+let showingCurrentMoves; // Flag to know if we are currently showing all the current player moves
 
 
 
@@ -35,7 +35,7 @@ function reset(callback) {
 	currentSquare = undefined;
 	from = undefined;
 	to = undefined;
-	p1movesButton = undefined;
+	showMovesButton = undefined;
 	p2movesButton = undefined;
 	startMove = undefined;
 	endMove = undefined;
@@ -49,24 +49,14 @@ function reset(callback) {
 	GAMESTATE = 1;
 	watchComputerPlay = false;
 	liveButtons = [];
-	liveButtons.push(randomMoveButton = new NButton("Make a random move", width / 2 - 240, 10, 160, 50, false));
-	liveButtons.push(computerPlayButton = new NButton("Toggle computer play", width / 2 + 80, 10, 160, 50, false));
+	liveButtons.push(randomMoveButton = new NButton("Make a random move", width / 2 - 320, 10, 160, 50, false));
+	liveButtons.push(computerPlayButton = new NButton("Toggle computer play", width / 2 + 160, 10, 160, 50, false));
 
 	for (let i = 0; i < cols; i++) {
 		board[i] = new Array(rows);
 	}
-	// Creating the button for playerOne
-	p1movesButton = createButton('Toggle Player One Moves');
-	p1movesButton.position(width + 15, 50);
-	p1movesButton.mousePressed(showAllP1Moves);
-	p1movesButton.mouseReleased(hideAllMoves);
-
-	// Creating the button for playerTwo
-	p1movesButton = createButton('Toggle Player Two Moves');
-	p1movesButton.position(width + 15, 90);
-	p1movesButton.mousePressed(showAllP2Moves);
-	p1movesButton.mouseReleased(hideAllMoves);
-
+	// Creating the button to show all legal moves for current player
+	liveButtons.push(showMovesButton = new NButton("Toggle Current Player moves", width / 2 - 100, 10, 200, 50, false));
 
 	playerOne = new Player(color(145), "Player One");
 	playerTwo = new Player(color(244, 185, 66), "Player Two");
@@ -105,6 +95,8 @@ function setup() {
 }
 
 function mousePressed() {
+	hideCurrentMoves();
+
 	// End Game Menu
 	if (gameOver) {
 		if (playAgain.isInside(mouseX, mouseY)) {
@@ -112,6 +104,7 @@ function mousePressed() {
 		}
 		return;
 	}
+	// Checking if we clicked any of the buttons
 	if (!gameOver) {
 		if (randomMoveButton.isInside(mouseX, mouseY)) {
 			makeRandomMove();
@@ -121,12 +114,20 @@ function mousePressed() {
 			watchComputerPlay = !watchComputerPlay;
 			return;
 		}
+		if (showMovesButton.isInside(mouseX, mouseY)) {
+			showingCurrentMoves = !showingCurrentMoves;
+			showCurrentMoves();
+			return;
+		}
 	}
 
 	// Check if we are inside the gameboard
 	if (isInBounds(mouseX, mouseY)) {
 		// If we are, highlight the legal moves of the square we are on
 		currentSquare = getSquare(mouseX, mouseY);
+		if (currentSquare.owner !== currentPlayer) {
+			return;
+		}
 		if (canKeepJumping) { // If we can keep jumping, then only the piece that went can go and it must jump
 			if (currentSquare.hasPiece() && currentSquare.mustJump) {
 				currentSquare.highLightJumps();
@@ -147,7 +148,7 @@ function mousePressed() {
 
 function mouseReleased() {
 	// Once we let go of the mouse, unhighlight all the legal moves
-	if (currentSquare) {
+	if (currentSquare && !showingCurrentMoves) {
 		currentSquare.unHighlightNeighbors();
 	}
 	// Check for endMove
@@ -158,24 +159,22 @@ function mouseReleased() {
 			startMove.owner == currentPlayer &&
 			startMove.neighbors.includes(endMove)) {
 			// Forces the player to keep jumping if they still can
-			if (startMove.mustJump && !startMove.jumps.includes(endMove)) {
-				return;
-			}
 			if (currentPlayer.mustJump(board)) {
 				if (!startMove.mustJump) return;
 				if (startMove.mustJump && !startMove.jumps.includes(endMove)) return;
 			}
+			// Make the move once we figure out where we are going
 			makeMove(startMove, endMove);
-
 		}
 	}
 }
 
 function makeMove(start, stop) {
+	hideCurrentMoves();
 	// Making the move
 	let theMove = new GameMove(currentPlayer, startMove, endMove);
-	console.log("Player " + startMove.ownerN + " Moved from (" + startMove.row + ", " +
-		startMove.col + ") to (" + endMove.row + ", " + endMove.col + ")");
+	// console.log("Player " + startMove.ownerN + " Moved from (" + startMove.row + ", " +
+	// 	startMove.col + ") to (" + endMove.row + ", " + endMove.col + ")");
 
 	theMove.doIt(); // Actually doing the move
 	currentPlayer.moves.push(theMove);
