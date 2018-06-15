@@ -14,10 +14,11 @@ function draw() {
 	drawArrow();
 	drawPlayerTurn();
 	drawCapturedPieces();
-	drawButtons();
-	if (frameCount % 30 === 0 && !gameOver && watchComputerPlay) {
+	drawButtons(liveButtons);
+	if (frameCount % 1 === 0 && !gameOver && watchComputerPlay) {
 		makeRandomMove();
 	}
+
 }
 
 function drawBoard() { // Draw the board. Comment out the 'showText' part if you don't want grid numbers
@@ -32,10 +33,11 @@ function drawBoard() { // Draw the board. Comment out the 'showText' part if you
 	}
 }
 
-function drawButtons() {
-	for (let i = 0; i < liveButtons.length; i++) {
-		liveButtons[i].show();
-		liveButtons[i].isInside(mouseX, mouseY);
+// Draws all of the buttons
+function drawButtons(anArray) {
+	for (let i = 0; i < anArray.length; i++) {
+		anArray[i].show();
+		anArray[i].isInside(mouseX, mouseY);
 	}
 }
 
@@ -79,15 +81,8 @@ function drawEndingScreen() {
 	text("Total Moves: " + moves.length, width / 2 - w * 2.5, h + 75 * 3);
 	text(playerOne.name + " pieces lost: " + playerTwo.capturedPieces.length, width / 2 - w * 2.5, h + 75 * 4);
 	text(playerTwo.name + " pieces lost: " + playerOne.capturedPieces.length, width / 2 - w * 2.5, h + 75 * 5);
-	drawGameOverButtons();
+	drawButtons(endingButtons);
 	pop();
-}
-
-function drawGameOverButtons() {
-	for (let i = 0; i < endingButtons.length; i++) {
-		endingButtons[i].show();
-		endingButtons[i].isInside(mouseX, mouseY);
-	}
 }
 
 function drawArrow() { // Draws the arrow to show previous turn
@@ -132,16 +127,18 @@ function drawArrow() { // Draws the arrow to show previous turn
 	}
 }
 
-function showAllP1Moves() {
-	// Shows all legal moves for a player
-	let hasToJump = playerOne.mustJump(board);
-
-	for (let i = 0; i < board[0].length; i++) {
-		for (let j = 0; j < board.length; j++) {
-			if (board[i][j].hasPiece() && board[i][j].owner == playerOne) {
-				if (hasToJump) {
+// Shows all possible legal moves for the current player
+function showCurrentMoves() {
+	for (let i = 0; i < board.length; i++) {
+		for (let j = 0; j < board[i].length; j++) {
+			// If the square belongs to the current player
+			if (board[i][j].owner == currentPlayer) {
+				// ... and they must jump
+				if (currentPlayer.mustJump(board)) {
+					// Show the possible jumps if we should be highlighting
 					board[i][j].highLightJumps();
 				} else {
+					// Otherwise show the moves that aren't jumps
 					board[i][j].highlightNeighbors();
 				}
 			}
@@ -149,32 +146,17 @@ function showAllP1Moves() {
 	}
 }
 
-function hideAllMoves() {
-	// Hides all legal moves for a player
-	for (let i = 0; i < board[0].length; i++) {
-		for (let j = 0; j < board.length; j++) {
-			if (board[i][j].hasPiece()) {
-				board[i][j].unHighlightNeighbors();
-			}
+// Hides all the moves on the board
+function hideCurrentMoves() {
+	showingCurrentMoves = false;
+	for (let i = 0; i < board.length; i++) {
+		for (let j = 0; j < board[i].length; j++) {
+			board[i][j].unHighlightNeighbors();
+			board[i][j].unHighLightJumps();
 		}
 	}
 }
 
-function showAllP2Moves() {
-	// Shows all legal moves for a player
-	let hasToJump = playerTwo.mustJump(board);
-	for (let i = 0; i < board[0].length; i++) {
-		for (let j = 0; j < board.length; j++) {
-			if (board[i][j].hasPiece() && board[i][j].owner == playerTwo) {
-				if (hasToJump) {
-					board[i][j].highLightJumps();
-				} else {
-					board[i][j].highlightNeighbors();
-				}
-			}
-		}
-	}
-}
 
 // Draws the captured pieces
 function drawCapturedPieces() {
