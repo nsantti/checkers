@@ -66,7 +66,7 @@ This is classic checkers with an interactive UI. ***NOTE*** Must use p5js librar
   - Made background larger
   - Made board location dynamic
   - Put all drawing code in its own file
-  - Show what color each player
+  - Show the color of each player
   - Increased font size
   - Made reset function
   - Got rid of redundant code
