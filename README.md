@@ -31,6 +31,7 @@ This is classic checkers with an interactive UI. ***NOTE*** Must use p5js librar
 
 
 ### TODO:
+- Draw arrows for when showing possible legal moves
 - Animate the pieces once a move is declared
 - Create a start screen
 - Let the players enter their name to play
