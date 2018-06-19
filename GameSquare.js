@@ -17,6 +17,7 @@ class GameSquare {
 		this.jumps = []; // Tells us the jumps we can do
 		this.mustJump = false; // Tells us if we must jump
 		this.displayText = false; // Should we show the board location?
+		this.showArrows = false; // Should we show all legal moves?
 	}
 	hasPiece() {
 		return (this.piece != null);
@@ -51,6 +52,42 @@ GameSquare.prototype.show = function() {
 	if (this.king) { // Draws a dot in the center of the circle if we are a king
 		fill(0);
 		ellipse(this.pos.x + this.size / 2, this.pos.y + this.size / 2, 5, 5);
+	}
+	//this.showMoves();
+}
+
+GameSquare.prototype.showMoves = function() {
+	if (!this.showArrows) return;
+	let target = (this.jumps.length > 0) ? this.jumps : this.neighbors;
+
+	for (let i = 0; i < target.length; i++) {
+		let offset = 7 / 5;
+		let arrowSize = 7;
+		let numRotates = 0;
+		let to = target[i];
+		push();
+		translate(this.pos.x + this.size / 2, this.pos.y + this.size / 2);
+		stroke(0, 200, 0);
+		rotate(PI / 4); // Default rotation to bottom left
+		// Figure out how many more rotations to do
+		if (to.row < this.row && to.col < this.col) {
+			numRotates = 1;
+		} else if (to.row < this.row && to.col > this.col) {
+			numRotates = 2;
+		} else if (to.row > this.row && to.col > this.col) {
+			numRotates = 3;
+		}
+		// Rotate until we are looking at the correct square
+		for (let i = 0; i < numRotates; i++) {
+			rotate(PI / 2);
+		}
+		let moveSize = this.size * offset * (abs(to.col - this.col) == 2 ? 2 : 1);
+		// Drawing the arrow
+		strokeWeight(2);
+		line(0, 0, 0, moveSize);
+		line(0, moveSize, -arrowSize, moveSize - arrowSize);
+		line(0, moveSize, arrowSize, moveSize - arrowSize);
+		pop();
 	}
 }
 
@@ -175,6 +212,7 @@ GameSquare.prototype.reset = function() {
 	this.piece = null;
 	this.king = false;
 	this.mustJump = false;
+	this.arrows = false;
 }
 
 // Will highlight each neighbor of a particular square
@@ -182,30 +220,36 @@ GameSquare.prototype.highlightNeighbors = function() {
 	for (var i = 0; i < this.neighbors.length; i++) {
 		this.neighbors[i].highlightSquare();
 	}
+	this.arrow = true;
 }
 
 GameSquare.prototype.highLightJumps = function() {
 	for (let i = 0; i < this.jumps.length; i++) {
 		this.jumps[i].highlightSquare();
 	}
+	this.arrow = true;
 }
 
 GameSquare.prototype.unHighlightNeighbors = function() {
 	for (var i = 0; i < this.neighbors.length; i++) {
 		this.neighbors[i].unHighlightSquare();
 	}
+	this.arrow = false;
 }
 
 GameSquare.prototype.unHighLightJumps = function() {
 	for (let i = 0; i < this.jumps.length; i++) {
 		this.jumps[i].unHighlightSquare();
 	}
+	this.arrow = false;
 }
 
 GameSquare.prototype.highlightSquare = function() {
-	this.highlight = true;
+	//this.highlight = true;
+	this.showArrows = true;
 }
 
 GameSquare.prototype.unHighlightSquare = function() {
-	this.highlight = false;
+	//	this.highlight = false;
+	this.showArrows = false;
 }

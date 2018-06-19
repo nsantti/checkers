@@ -11,6 +11,7 @@ class GameMove {
 		this.to.owner = this.from.owner;
 		this.to.ownerN = this.from.ownerN;
 		this.to.mustJump = false;
+		this.to.showArrows = false;
 
 		this.checkForKing();
 

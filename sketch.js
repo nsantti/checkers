@@ -104,20 +104,27 @@ function mousePressed() {
 		if (currentSquare.owner !== currentPlayer) {
 			return;
 		}
+
 		if (canKeepJumping) { // If we can keep jumping, then only the piece that went can go and it must jump
 			if (currentSquare.hasPiece() && currentSquare.mustJump) {
-				currentSquare.highLightJumps();
+				//currentSquare.highLightJumps();
 				startMove = currentSquare;
 			}
 		} else {
 			if (currentSquare.hasPiece()) {
 				startMove = currentSquare;
 				if (currentSquare.mustJump) {
-					currentSquare.highLightJumps();
+					//currentSquare.highLightJumps();
 				} else {
-					currentSquare.highlightNeighbors();
+					//currentSquare.highlightNeighbors();
 				}
 			}
+		}
+		if (getCurrentPlayer().mustJump(board) && !currentSquare.mustJump) {
+			currentSquare.showArrows = false;
+		} else {
+			currentSquare.showArrows = true;
+
 		}
 	}
 }
@@ -157,6 +164,7 @@ function mouseReleased() {
 	// Once we let go of the mouse, unhighlight all the legal moves
 	if (currentSquare && !showingCurrentMoves) {
 		currentSquare.unHighlightNeighbors();
+		currentSquare.showArrows = false;
 	}
 	// Check for endMove
 	if (isInBounds(mouseX, mouseY)) {
@@ -242,6 +250,7 @@ function updatePieces() {
 			board[i][j].mustJump = false;
 			board[i][j].neighbors = [];
 			board[i][j].jumps = [];
+			board[i][j].showArrows = false;
 		}
 	}
 }
