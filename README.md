@@ -17,10 +17,11 @@ This is classic checkers with an interactive UI. ***NOTE*** Must use p5js librar
 - Visual appeal
   - Squares are highlighted when the mouse is in them
   - Pieces that must jump are highlighted
-  - Whenever a square is clicked, the legal moves will be highlighted until the mouse is released
+  - Whenever a square is clicked, the legal moves will be shown until the mouse is released
   - Players are different colors
   - Arrows are drawn to show previous turn
     - If a multiple-jump move occurs, all arrows are drawn to show move path
+    - Arrows are drawn to show potential legal moves
   - Game will tell players whose turn it is
   - Game will tell players who wins
   - Kings are distinguishable from other pieces
@@ -31,7 +32,6 @@ This is classic checkers with an interactive UI. ***NOTE*** Must use p5js librar
 
 
 ### TODO:
-- Draw arrows for when showing possible legal moves
 - Animate the pieces once a move is declared
 - Create a start screen
 - Let the players enter their name to play
