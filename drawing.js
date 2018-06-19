@@ -12,20 +12,28 @@ function draw() {
 	background(50);
 	drawBoard();
 	drawArrow();
+	drawArrowMoves();
 	drawPlayerTurn();
 	drawCapturedPieces();
 	drawButtons(liveButtons);
 	if (frameCount % 1 === 0 && !gameOver && watchComputerPlay) {
 		makeRandomMove();
 	}
+}
 
+function drawArrowMoves() {
+	for (let i = 0; i < cols; i++) {
+		for (let j = 0; j < rows; j++) {
+			board[i][j].showMoves();
+		}
+	}
 }
 
 function drawBoard() { // Draw the board. Comment out the 'showText' part if you don't want grid numbers
 	for (let i = 0; i < cols; i++) {
 		for (let j = 0; j < rows; j++) {
 			board[i][j].show();
-			//board[i][j].showText();
+			board[i][j].showText();
 			if (!gameOver) {
 				board[i][j].checkInside(mouseX, mouseY);
 			}
@@ -132,27 +140,30 @@ function showCurrentMoves() {
 	for (let i = 0; i < board.length; i++) {
 		for (let j = 0; j < board[i].length; j++) {
 			// If the square belongs to the current player
-			if (board[i][j].owner == currentPlayer) {
+			if (board[i][j].owner === getCurrentPlayer()) {
 				// ... and they must jump
 				if (currentPlayer.mustJump(board)) {
 					// Show the possible jumps if we should be highlighting
-					board[i][j].highLightJumps();
+					if (board[i][j].mustJump) {
+						board[i][j].showArrows = true;
+					}
 				} else {
 					// Otherwise show the moves that aren't jumps
-					board[i][j].highlightNeighbors();
+					board[i][j].showArrows = true;
 				}
 			}
 		}
+
 	}
 }
+
 
 // Hides all the moves on the board
 function hideCurrentMoves() {
 	showingCurrentMoves = false;
 	for (let i = 0; i < board.length; i++) {
 		for (let j = 0; j < board[i].length; j++) {
-			board[i][j].unHighlightNeighbors();
-			board[i][j].unHighLightJumps();
+			board[i][j].showArrows = false;
 		}
 	}
 }

@@ -5,7 +5,7 @@ class NButton {
 		this.w = w; // How wide is the button?
 		this.h = h; // How tall is the button?
 		this.color = color(255);
-		this.hide = hide;
+		this.hide = hide; // Should we show the button?
 	}
 
 	show() {

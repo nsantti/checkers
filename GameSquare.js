@@ -16,6 +16,8 @@ class GameSquare {
 		this.king = false; // Tells us if we are a king
 		this.jumps = []; // Tells us the jumps we can do
 		this.mustJump = false; // Tells us if we must jump
+		this.displayText = false; // Should we show the board location?
+		this.showArrows = false; // Should we show all legal moves?
 	}
 	hasPiece() {
 		return (this.piece != null);
@@ -51,12 +53,50 @@ GameSquare.prototype.show = function() {
 		fill(0);
 		ellipse(this.pos.x + this.size / 2, this.pos.y + this.size / 2, 5, 5);
 	}
+	//this.showMoves();
+}
+
+GameSquare.prototype.showMoves = function() {
+	if (!this.showArrows) return;
+	let target = (this.jumps.length > 0) ? this.jumps : this.neighbors;
+
+	for (let i = 0; i < target.length; i++) {
+		let offset = 7 / 5;
+		let arrowSize = 7;
+		let numRotates = 0;
+		let to = target[i];
+		push();
+		translate(this.pos.x + this.size / 2, this.pos.y + this.size / 2);
+		stroke(0, 200, 0);
+		rotate(PI / 4); // Default rotation to bottom left
+		// Figure out how many more rotations to do
+		if (to.row < this.row && to.col < this.col) {
+			numRotates = 1;
+		} else if (to.row < this.row && to.col > this.col) {
+			numRotates = 2;
+		} else if (to.row > this.row && to.col > this.col) {
+			numRotates = 3;
+		}
+		// Rotate until we are looking at the correct square
+		for (let i = 0; i < numRotates; i++) {
+			rotate(PI / 2);
+		}
+		let moveSize = this.size * offset * (abs(to.col - this.col) == 2 ? 2 : 1);
+		// Drawing the arrow
+		strokeWeight(2);
+		line(0, 0, 0, moveSize);
+		line(0, moveSize, -arrowSize, moveSize - arrowSize);
+		line(0, moveSize, arrowSize, moveSize - arrowSize);
+		pop();
+	}
 }
 
 GameSquare.prototype.showText = function() {
-	// Shows the square's row and col number. Used for testing
-	fill(255);
-	text(this.row + ", " + this.col, this.pos.x + 15, this.pos.y + 20);
+	if (this.displayText) {
+		// Shows the square's row and col number. Used for testing
+		fill(255);
+		text(this.row + ", " + this.col, this.pos.x + this.size / 2, this.pos.y + this.size / 4);
+	}
 }
 
 GameSquare.prototype.checkInside = function(x, y) {
@@ -77,20 +117,20 @@ GameSquare.prototype.addPiece = function(piece) {
 }
 
 // Generating all legal moves for a square
-GameSquare.prototype.generateNeighbors = function(board, mustJump) {
+GameSquare.prototype.generateNeighbors = function(board) {
 	this.neighbors = []; // Resetting the possible jumps and neighbors
 	this.jumps = [];
 	if (this.ownerN == 1) { // Player one can move downwards unless they are king
-		this.checkUpper(board, this.row, this.col, this.king, mustJump);
-		this.checkLower(board, this.row, this.col, true, mustJump);
+		this.checkUpper(board, this.row, this.col, this.king);
+		this.checkLower(board, this.row, this.col, true);
 	} else if (this.ownerN == 2) { // Player Two can move upwards unless they are a king
-		this.checkUpper(board, this.row, this.col, true, mustJump);
-		this.checkLower(board, this.row, this.col, this.king, mustJump);
+		this.checkUpper(board, this.row, this.col, true);
+		this.checkLower(board, this.row, this.col, this.king);
 	}
 }
 
 // Checking the top two moves
-GameSquare.prototype.checkUpper = function(board, row, col, canAccess, mustJump) {
+GameSquare.prototype.checkUpper = function(board, row, col, canAccess) {
 	if (canAccess) {
 		// Check top left.
 		if (row > 0 && col > 0) { // Can we look at this spot on the board?
@@ -128,7 +168,7 @@ GameSquare.prototype.checkUpper = function(board, row, col, canAccess, mustJump)
 }
 
 // Checking the lower two moves
-GameSquare.prototype.checkLower = function(board, row, col, canAccess, mustJump) {
+GameSquare.prototype.checkLower = function(board, row, col, canAccess) {
 	if (canAccess) {
 		// Check lower left.
 		if (row < 7 && col > 0) {
@@ -165,12 +205,14 @@ GameSquare.prototype.checkLower = function(board, row, col, canAccess, mustJump)
 	}
 }
 
+
 GameSquare.prototype.reset = function() {
 	this.owner = null;
 	this.ownerN = 0;
 	this.piece = null;
 	this.king = false;
 	this.mustJump = false;
+	this.arrows = false;
 }
 
 // Will highlight each neighbor of a particular square
@@ -178,30 +220,36 @@ GameSquare.prototype.highlightNeighbors = function() {
 	for (var i = 0; i < this.neighbors.length; i++) {
 		this.neighbors[i].highlightSquare();
 	}
+	this.arrow = true;
 }
 
 GameSquare.prototype.highLightJumps = function() {
 	for (let i = 0; i < this.jumps.length; i++) {
 		this.jumps[i].highlightSquare();
 	}
+	this.arrow = true;
 }
 
 GameSquare.prototype.unHighlightNeighbors = function() {
 	for (var i = 0; i < this.neighbors.length; i++) {
 		this.neighbors[i].unHighlightSquare();
 	}
+	this.arrow = false;
 }
 
 GameSquare.prototype.unHighLightJumps = function() {
 	for (let i = 0; i < this.jumps.length; i++) {
 		this.jumps[i].unHighlightSquare();
 	}
+	this.arrow = false;
 }
 
 GameSquare.prototype.highlightSquare = function() {
-	this.highlight = true;
+	//this.highlight = true;
+	this.showArrows = true;
 }
 
 GameSquare.prototype.unHighlightSquare = function() {
-	this.highlight = false;
+	//	this.highlight = false;
+	this.showArrows = false;
 }
