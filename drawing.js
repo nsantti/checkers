@@ -25,7 +25,7 @@ function drawBoard() { // Draw the board. Comment out the 'showText' part if you
 	for (let i = 0; i < cols; i++) {
 		for (let j = 0; j < rows; j++) {
 			board[i][j].show();
-			//board[i][j].showText();
+			board[i][j].showText();
 			if (!gameOver) {
 				board[i][j].checkInside(mouseX, mouseY);
 			}

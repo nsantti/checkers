@@ -22,6 +22,7 @@ let randomMoveButton; // Button to make a random move
 let watchComputerPlay; // Flags the code to make the computer play against itself
 let computerPlayButton; // Button for the user to click on to watch the computer play
 let showingCurrentMoves; // Flag to know if we are currently showing all the current player moves
+let toggleNumberButton; // Button to toggle showing the text or not
 
 
 
@@ -40,9 +41,6 @@ function reset(callback) {
 	startMove = undefined;
 	endMove = undefined;
 	moves = [];
-	playerOne;
-	playerTwo;
-	currentPlayer = null;
 	mustJump = false;
 	canKeepJumping = false;
 	gameOver = false;
@@ -51,12 +49,13 @@ function reset(callback) {
 	liveButtons = [];
 	liveButtons.push(randomMoveButton = new NButton("Make a random move", width / 2 - 320, 10, 160, 50, false));
 	liveButtons.push(computerPlayButton = new NButton("Toggle computer play", width / 2 + 160, 10, 160, 50, false));
+	liveButtons.push(toggleNumberButton = new NButton("Numbers", 5, 10, 70, 50, false));
 
 	for (let i = 0; i < cols; i++) {
 		board[i] = new Array(rows);
 	}
 	// Creating the button to show all legal moves for current player
-	liveButtons.push(showMovesButton = new NButton("Toggle Current Player moves", width / 2 - 100, 10, 200, 50, false));
+	liveButtons.push(showMovesButton = new NButton("Show Current Player moves", width / 2 - 100, 10, 200, 50, false));
 
 	playerOne = new Player(color(145), "Player One");
 	playerTwo = new Player(color(244, 185, 66), "Player Two");
@@ -65,7 +64,7 @@ function reset(callback) {
 	// Creating the squares
 	for (let i = 0; i < cols; i++) {
 		for (let j = 0; j < rows; j++) {
-			board[i][j] = ((i + j) % 2 == 0) ?
+			board[i][j] = ((i + j) % 2 === 0) ?
 				new GameSquare(null, 0, i, j, j * w + (width - (8 * w)) / 2, i * h + 75, 215, 0, 0) :
 				new GameSquare(null, 0, i, j, j * w + (width - (8 * w)) / 2, i * h + 75, 0, 0, 0);
 		}
@@ -91,35 +90,12 @@ function reset(callback) {
 function setup() {
 	createCanvas(800, 800);
 	reset();
-	textAlign(CENTER);
 }
 
 function mousePressed() {
 	hideCurrentMoves();
-
 	// End Game Menu
-	if (gameOver) {
-		if (playAgain.isInside(mouseX, mouseY)) {
-			reset();
-		}
-		return;
-	}
-	// Checking if we clicked any of the buttons
-	if (!gameOver) {
-		if (randomMoveButton.isInside(mouseX, mouseY)) {
-			makeRandomMove();
-			return;
-		}
-		if (computerPlayButton.isInside(mouseX, mouseY)) {
-			watchComputerPlay = !watchComputerPlay;
-			return;
-		}
-		if (showMovesButton.isInside(mouseX, mouseY)) {
-			showingCurrentMoves = !showingCurrentMoves;
-			showCurrentMoves();
-			return;
-		}
-	}
+	checkButtons(mouseX, mouseY);
 
 	// Check if we are inside the gameboard
 	if (isInBounds(mouseX, mouseY)) {
@@ -146,6 +122,37 @@ function mousePressed() {
 	}
 }
 
+// Checks each of the live game buttons to see if the user clicked them
+function checkButtons(x, y) {
+	if (gameOver) {
+		if (playAgain.isInside(x, y)) {
+			reset();
+		}
+		return;
+	}
+	// Checking if we clicked any of the buttons
+	if (!gameOver) {
+		if (randomMoveButton.isInside(x, y)) {
+			makeRandomMove();
+			return;
+		}
+		if (computerPlayButton.isInside(x, y)) {
+			watchComputerPlay = !watchComputerPlay;
+			return;
+		}
+		if (showMovesButton.isInside(x, y)) {
+			if (!showingCurrentMoves) {
+				showCurrentMoves();
+				showingCurrentMoves = true;
+			}
+			return;
+		}
+		if (toggleNumberButton.isInside(x, y)) {
+			toggleNumbers();
+		}
+	}
+}
+
 function mouseReleased() {
 	// Once we let go of the mouse, unhighlight all the legal moves
 	if (currentSquare && !showingCurrentMoves) {
@@ -154,12 +161,12 @@ function mouseReleased() {
 	// Check for endMove
 	if (isInBounds(mouseX, mouseY)) {
 		endMove = getSquare(mouseX, mouseY);
-		if (startMove != undefined &&
-			startMove != endMove &&
-			startMove.owner == currentPlayer &&
+		if (startMove !== undefined &&
+			startMove !== endMove &&
+			startMove.owner === getCurrentPlayer() &&
 			startMove.neighbors.includes(endMove)) {
 			// Forces the player to keep jumping if they still can
-			if (currentPlayer.mustJump(board)) {
+			if (getCurrentPlayer().mustJump(board)) {
 				if (!startMove.mustJump) return;
 				if (startMove.mustJump && !startMove.jumps.includes(endMove)) return;
 			}
@@ -172,12 +179,12 @@ function mouseReleased() {
 function makeMove(start, stop) {
 	hideCurrentMoves();
 	// Making the move
-	let theMove = new GameMove(currentPlayer, startMove, endMove);
+	let theMove = new GameMove(getCurrentPlayer(), startMove, endMove);
 	// console.log("Player " + startMove.ownerN + " Moved from (" + startMove.row + ", " +
 	// 	startMove.col + ") to (" + endMove.row + ", " + endMove.col + ")");
 
 	theMove.doIt(); // Actually doing the move
-	currentPlayer.moves.push(theMove);
+	getCurrentPlayer().moves.push(theMove);
 	moves.push(theMove);
 
 	// If we jumped a piece, remove the one that was jumped.
@@ -186,16 +193,16 @@ function makeMove(start, stop) {
 
 		let square = squareThatWasJumped(theMove);
 		// Each player keeps track of pieces it jumped
-		currentPlayer.addCaptured(square.king);
+		getCurrentPlayer().addCaptured(square.king);
 		updatePieces();
 		removePiece(square);
-		endMove.generateNeighbors(board, false);
+		endMove.generateNeighbors(board);
 
 		checkForMoreJumps(endMove);
 	}
 	// If we can keep jumping, don't change turns
 	if (!canKeepJumping) {
-		currentPlayer = (currentPlayer == playerOne) ? playerTwo : playerOne;
+		switchPlayer();
 		generateMoves();
 	}
 
@@ -205,31 +212,14 @@ function makeMove(start, stop) {
 
 function checkGameOver() {
 	// If a player has no more pieces or cannot play, they lose
-	let playerOneLost = true;
-	let playerTwoLost = true;
-	// If we find at least one move for each player, game is not over
-	for (let i = 0; i < rows; i++) {
-		for (let j = 0; j < cols; j++) {
-			if (board[i][j].neighbors.length > 0 || board[i][j].jumps.length > 0) {
-				if (board[i][j].owner == playerOne) {
-					playerOneLost = false;
-				} else {
-					playerTwoLost = false;
-				}
-			}
-		}
-	}
-	if (playerOneLost) {
+	if (!getCurrentPlayer().canMove(board)) {
 		gameOver = true;
-		playerOne.won = false;
-		playerTwo.won = true;
-	} else if (playerTwoLost) {
-		gameOver = true;
-		playerTwo.won = false;
-		playerOne.won = true;
+		getCurrentPlayer().won = false;
+		getOtherPlayer().won = true;
 	}
+
 	// Checking for a tie. Ties are when 200 moves occur and still no winner
-	if (!playerOneLost && !playerTwoLost) {
+	else {
 		if (moves.length >= 200) {
 			gameOver = true;
 		}
@@ -250,6 +240,16 @@ function updatePieces() {
 	for (let i = 0; i < board.length; i++) {
 		for (let j = 0; j < board[i].length; j++) {
 			board[i][j].mustJump = false;
+			board[i][j].neighbors = [];
+			board[i][j].jumps = [];
+		}
+	}
+}
+
+function toggleNumbers() {
+	for (let i = 0; i < board.length; i++) {
+		for (let j = 0; j < board[i].length; j++) {
+			board[i][j].displayText = !board[i][j].displayText;
 		}
 	}
 }
@@ -257,11 +257,11 @@ function updatePieces() {
 // Makes a random move for the current player
 function makeRandomMove() {
 	let possibleStarts = [];
-	if (currentPlayer.mustJump(board)) {
+	if (getCurrentPlayer().mustJump(board)) {
 		// Get all squares that must jump
 		for (let i = 0; i < board.length; i++) {
 			for (let j = 0; j < board[i].length; j++) {
-				if (board[i][j].owner == currentPlayer && board[i][j].mustJump) {
+				if (board[i][j].owner == getCurrentPlayer() && board[i][j].mustJump) {
 					possibleStarts.push(board[i][j]);
 				}
 			}
@@ -269,8 +269,8 @@ function makeRandomMove() {
 	} else {
 		for (let i = 0; i < board.length; i++) {
 			for (let j = 0; j < board[i].length; j++) {
-				// Get all square that can move
-				if (board[i][j].owner == currentPlayer && board[i][j].neighbors.length > 0) {
+				// Get all squares that can move
+				if (board[i][j].owner == getCurrentPlayer() && board[i][j].neighbors.length > 0) {
 					possibleStarts.push(board[i][j]);
 				}
 			}
@@ -278,16 +278,9 @@ function makeRandomMove() {
 	}
 	// Choose a random square to move
 	startMove = random(possibleStarts);
-	endMove = (currentPlayer.mustJump(board)) ? random(startMove.jumps) : random(startMove.neighbors);
+	endMove = (getCurrentPlayer().mustJump(board)) ? random(startMove.jumps) : random(startMove.neighbors);
 	makeMove(startMove, endMove);
 }
-
-// Checks to see if we became a king the previous turn. Not using
-function madeKing(aMove) {
-	return (aMove.from.king == false && aMove.to.king);
-}
-
-
 
 // Gets the square the player clicked on.
 // Assumed they clicked in the board
@@ -306,9 +299,13 @@ function generateMoves() {
 	// Generating the neighbors for each piece
 	for (let i = 0; i < cols; i++) {
 		for (let j = 0; j < rows; j++) {
-			board[i][j].generateNeighbors(board, mustJump);
+			board[i][j].generateNeighbors(board);
 		}
 	}
+}
+
+function switchPlayer() {
+	currentPlayer = (currentPlayer == playerOne) ? playerTwo : playerOne;
 }
 
 // Tells us if we jumped a piece.
@@ -335,8 +332,8 @@ function removePiece(aSquare) {
 
 function checkForKings() {
 	// Check to see if we have any kings
-	for (let i = 0; i < board[0].length; i++) {
-		for (let j = 0; j < board.length; j++) {
+	for (let i = 0; i < board.length; i++) {
+		for (let j = 0; j < board[i].length; j++) {
 			if ((i + j) % 2 == 1) {
 				let square = board[i][j];
 				// If the opposing player makes it across, king them

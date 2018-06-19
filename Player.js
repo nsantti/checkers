@@ -9,6 +9,7 @@ class Player {
 		this.capturedPieces = []; // A list of pieces the player has captured
 	}
 
+
 	// Tells us if the player must jump
 	mustJump(board) {
 		for (let i = 0; i < board.length; i++) {
@@ -23,7 +24,7 @@ class Player {
 
 	// Add a captured piece to the list
 	addCaptured(king) {
-		this.capturedPieces.push(new SidePiece(getOtherPlayer().color, this.capturedPieces.length, king, currentPlayer));
+		this.capturedPieces.push(new SidePiece(getOtherPlayer().color, this.capturedPieces.length, king, this));
 	}
 
 	// Draws all of the captured pieces
@@ -31,6 +32,20 @@ class Player {
 		for (let i = 0; i < this.capturedPieces.length; i++) {
 			this.capturedPieces[i].show();
 		}
+	}
+
+	canMove(board) {
+		for (let i = 0; i < board.length; i++) {
+			for (let j = 0; j < board[i].length; j++) {
+				if (board[i][j].owner !== this) {
+					continue;
+				}
+				if (board[i][j].neighbors.length > 0 || board[i][j].jumps.length > 0) {
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 
 }

@@ -16,6 +16,7 @@ class GameSquare {
 		this.king = false; // Tells us if we are a king
 		this.jumps = []; // Tells us the jumps we can do
 		this.mustJump = false; // Tells us if we must jump
+		this.displayText = false; // Should we show the board location?
 	}
 	hasPiece() {
 		return (this.piece != null);
@@ -54,9 +55,11 @@ GameSquare.prototype.show = function() {
 }
 
 GameSquare.prototype.showText = function() {
-	// Shows the square's row and col number. Used for testing
-	fill(255);
-	text(this.row + ", " + this.col, this.pos.x + 15, this.pos.y + 20);
+	if (this.displayText) {
+		// Shows the square's row and col number. Used for testing
+		fill(255);
+		text(this.row + ", " + this.col, this.pos.x + this.size / 2, this.pos.y + this.size / 4);
+	}
 }
 
 GameSquare.prototype.checkInside = function(x, y) {
@@ -77,20 +80,20 @@ GameSquare.prototype.addPiece = function(piece) {
 }
 
 // Generating all legal moves for a square
-GameSquare.prototype.generateNeighbors = function(board, mustJump) {
+GameSquare.prototype.generateNeighbors = function(board) {
 	this.neighbors = []; // Resetting the possible jumps and neighbors
 	this.jumps = [];
 	if (this.ownerN == 1) { // Player one can move downwards unless they are king
-		this.checkUpper(board, this.row, this.col, this.king, mustJump);
-		this.checkLower(board, this.row, this.col, true, mustJump);
+		this.checkUpper(board, this.row, this.col, this.king);
+		this.checkLower(board, this.row, this.col, true);
 	} else if (this.ownerN == 2) { // Player Two can move upwards unless they are a king
-		this.checkUpper(board, this.row, this.col, true, mustJump);
-		this.checkLower(board, this.row, this.col, this.king, mustJump);
+		this.checkUpper(board, this.row, this.col, true);
+		this.checkLower(board, this.row, this.col, this.king);
 	}
 }
 
 // Checking the top two moves
-GameSquare.prototype.checkUpper = function(board, row, col, canAccess, mustJump) {
+GameSquare.prototype.checkUpper = function(board, row, col, canAccess) {
 	if (canAccess) {
 		// Check top left.
 		if (row > 0 && col > 0) { // Can we look at this spot on the board?
@@ -128,7 +131,7 @@ GameSquare.prototype.checkUpper = function(board, row, col, canAccess, mustJump)
 }
 
 // Checking the lower two moves
-GameSquare.prototype.checkLower = function(board, row, col, canAccess, mustJump) {
+GameSquare.prototype.checkLower = function(board, row, col, canAccess) {
 	if (canAccess) {
 		// Check lower left.
 		if (row < 7 && col > 0) {
@@ -164,6 +167,7 @@ GameSquare.prototype.checkLower = function(board, row, col, canAccess, mustJump)
 		}
 	}
 }
+
 
 GameSquare.prototype.reset = function() {
 	this.owner = null;

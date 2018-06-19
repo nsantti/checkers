@@ -87,6 +87,33 @@ function board8() {
 	playerPiece(3, 2, 2);
 }
 
+function board9() {
+	playerPiece(5, 2, 1);
+	playerPiece(7, 0, 2);
+	playerPiece(7, 2, 2);
+}
+
+function board10() {
+	playerPiece(5, 0, 1);
+	playerPiece(6, 1, 2);
+	playerPiece(6, 3, 2);
+	playerPiece(6, 5, 2);
+}
+
+function board11() {
+	playerPiece(1, 6, 1);
+	playerPiece(2, 5, 2);
+	playerPiece(4, 5, 2);
+	playerPiece(6, 5, 2);
+	playerPiece(6, 3, 2);
+	playerPiece(4, 1, 2);
+	playerPiece(2, 1, 2);
+	playerPiece(2, 3, 2);
+	playerPiece(4, 3, 2);
+	playerPiece(6, 1, 2);
+
+}
+
 // Simple way to place pieces on the board
 function playerPiece(aRow, aCol, anOwnerN, aKing = false) {
 	let anOwner = (anOwnerN == 1) ? playerOne : playerTwo;

@@ -6,7 +6,6 @@ class SidePiece {
 		this.index = index;
 		this.king = king;
 		this.size = 30;
-		this.owner = owner;
 	}
 
 	// The player object keeps track of all the captured pieces. This will show the captured piece
