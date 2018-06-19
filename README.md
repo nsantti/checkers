@@ -40,6 +40,15 @@ This is classic checkers with an interactive UI. ***NOTE*** Must use p5js librar
 - Create AI for players to play against
 
 ### Updates made
+- 6/19/18
+  - Added button to show grid square numbers
+  - Added button to reset the game
+  - No longer highlighting the squares where each piece can go
+    - Instead, an arrow is drawn to show where each piece can go
+  - Added keypressed function
+    - Clicking the 'm' button on the keyboard makes a random move
+
+&nbsp;
 - 6/15/18
   - Got rid of DOM buttons
   - Can use the online P5 library now, no need to download it
