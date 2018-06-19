@@ -23,6 +23,7 @@ let watchComputerPlay; // Flags the code to make the computer play against itsel
 let computerPlayButton; // Button for the user to click on to watch the computer play
 let showingCurrentMoves; // Flag to know if we are currently showing all the current player moves
 let toggleNumberButton; // Button to toggle showing the text or not
+let resetButton; // Button to reset the game
 
 
 
@@ -50,6 +51,7 @@ function reset(callback) {
 	liveButtons.push(randomMoveButton = new NButton("Make a random move", width / 2 - 320, 10, 160, 50, false));
 	liveButtons.push(computerPlayButton = new NButton("Toggle computer play", width / 2 + 160, 10, 160, 50, false));
 	liveButtons.push(toggleNumberButton = new NButton("Numbers", 5, 10, 70, 50, false));
+	liveButtons.push(resetButton = new NButton("Reset", width - 75, 10, 70, 50, false));
 
 	for (let i = 0; i < cols; i++) {
 		board[i] = new Array(rows);
@@ -157,6 +159,9 @@ function checkButtons(x, y) {
 		if (toggleNumberButton.isInside(x, y)) {
 			toggleNumbers();
 		}
+		if (resetButton.isInside(x, y)) {
+			reset();
+		}
 	}
 }
 
@@ -176,10 +181,19 @@ function mouseReleased() {
 			// Forces the player to keep jumping if they still can
 			if (getCurrentPlayer().mustJump(board)) {
 				if (!startMove.mustJump) return;
-				if (startMove.mustJump && !startMove.jumps.includes(endMove)) return;
+				if (!startMove.jumps.includes(endMove)) return;
 			}
 			// Make the move once we figure out where we are going
 			makeMove(startMove, endMove);
+		}
+	}
+}
+
+function keyPressed() {
+
+	if (key == 'M') {
+		if (!gameOver) {
+			makeRandomMove();
 		}
 	}
 }
