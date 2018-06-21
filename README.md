@@ -14,6 +14,8 @@ This is classic checkers with an interactive UI. ***NOTE*** Must use p5js librar
   - Button available to watch a computer play against itself
   - Game Over screen has a button to play again
   - Button to see all available legal moves for current player
+  - Undo button to undo the previous move
+    - Can undo as many moves as wanted
 - Visual appeal
   - Squares are highlighted when the mouse is in them
   - Pieces that must jump are highlighted
@@ -21,7 +23,7 @@ This is classic checkers with an interactive UI. ***NOTE*** Must use p5js librar
   - Players are different colors
   - Arrows are drawn to show previous turn
     - If a multiple-jump move occurs, all arrows are drawn to show move path
-    - Arrows are drawn to show potential legal moves
+    - Arrows are drawn to show legal moves when a piece is clicked
   - Game will tell players whose turn it is
   - Game will tell players who wins
   - Kings are distinguishable from other pieces
@@ -43,6 +45,7 @@ This is classic checkers with an interactive UI. ***NOTE*** Must use p5js librar
 - 6/21/18
   - Added undo button to undo the previous move
     - Can keep undoing moves until back to game start state
+    - Pieces are removed from the side if player is undoing a jump
   - Pressing 'u' will undo the previous move
   - Pressing 's' will show all legal moves for the current player
   
@@ -53,7 +56,7 @@ This is classic checkers with an interactive UI. ***NOTE*** Must use p5js librar
   - No longer highlighting the squares where each piece can go
     - Instead, an arrow is drawn to show where each piece can go
   - Added keypressed function
-    - Clicking the 'm' button on the keyboard makes a random move
+    - Pressing the 'm' button on the keyboard makes a random move
 
 &nbsp;
 - 6/15/18
