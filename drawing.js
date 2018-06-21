@@ -106,33 +106,39 @@ function drawArrow() { // Draws the arrow to show previous turn
 	}
 	for (let i = moves.length - startingPoint; i < moves.length; i++) {
 		let move = moves[i];
-		let offset = 7 / 5;
-		let arrowSize = 7;
-		let numRotates = 0;
-		push();
-		translate(move.from.pos.x + move.from.size / 2, move.from.pos.y + move.from.size / 2);
-		stroke(255);
-		rotate(PI / 4); // Default rotation to bottom left
-		// Figure out how many more rotations to do
-		if (move.to.row < move.from.row && move.to.col < move.from.col) {
-			numRotates = 1;
-		} else if (move.to.row < move.from.row && move.to.col > move.from.col) {
-			numRotates = 2;
-		} else if (move.to.row > move.from.row && move.to.col > move.from.col) {
-			numRotates = 3;
-		}
-		// Rotate until we are looking at the correct square
-		for (let i = 0; i < numRotates; i++) {
-			rotate(PI / 2);
-		}
-		let moveSize = move.from.size * offset * (abs(move.to.col - move.from.col) == 2 ? 2 : 1);
-		// Drawing the arrow
-		strokeWeight(2);
-		line(0, 0, 0, moveSize);
-		line(0, moveSize, -arrowSize, moveSize - arrowSize);
-		line(0, moveSize, arrowSize, moveSize - arrowSize);
-		pop();
+		drawArrowFromTo(moves[i].from, moves[i].to);
 	}
+}
+
+// Draws the arrow with a given from and to location
+function drawArrowFromTo(from, to, col = color(255)) {
+	let offset = 7 / 5;
+	let arrowSize = 7;
+	let numRotates = 0;
+	push();
+	translate(from.pos.x + from.size / 2, from.pos.y + from.size / 2);
+	stroke(col);
+	rotate(PI / 4); // Default rotation to bottom left
+	// Figure out how many more rotations to do
+	if (to.row < from.row && to.col < from.col) {
+		numRotates = 1;
+	} else if (to.row < from.row && to.col > from.col) {
+		numRotates = 2;
+	} else if (to.row > from.row && to.col > from.col) {
+		numRotates = 3;
+	}
+	// Rotate until we are looking at the correct square
+	for (let i = 0; i < numRotates; i++) {
+		rotate(PI / 2);
+	}
+	let moveSize = from.size * offset * (abs(to.col - from.col) == 2 ? 2 : 1);
+	// Drawing the arrow
+	strokeWeight(2);
+	line(0, 0, 0, moveSize);
+	line(0, moveSize, -arrowSize, moveSize - arrowSize);
+	line(0, moveSize, arrowSize, moveSize - arrowSize);
+	pop();
+
 }
 
 // Shows all possible legal moves for the current player

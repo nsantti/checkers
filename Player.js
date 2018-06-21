@@ -27,6 +27,10 @@ class Player {
 		this.capturedPieces.push(new SidePiece(getOtherPlayer().color, this.capturedPieces.length, king, this));
 	}
 
+	removeCaptured() {
+		return this.capturedPieces.pop();
+	}
+
 	// Draws all of the captured pieces
 	drawCaptured() {
 		for (let i = 0; i < this.capturedPieces.length; i++) {
@@ -46,6 +50,18 @@ class Player {
 			}
 		}
 		return false;
+	}
+
+	squaresOwned(board) {
+		let owned = [];
+		for (let i = 0; i < board.length; i++) {
+			for (let j = 0; j < board[i].length; j++) {
+				if (board[i][j].owner === this) {
+					owned.push(board[i][j]);
+				}
+			}
+		}
+		return owned;
 	}
 
 }

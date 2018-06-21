@@ -111,7 +111,16 @@ function board11() {
 	playerPiece(2, 3, 2);
 	playerPiece(4, 3, 2);
 	playerPiece(6, 1, 2);
+}
 
+function board12() {
+	playerPiece(0, 7, 1);
+	playerPiece(1, 0, 1);
+	playerPiece(3, 0, 2);
+	playerPiece(4, 1, 2);
+	playerPiece(4, 3, 2);
+	playerPiece(5, 4, 2);
+	playerPiece(5, 0, 2);
 }
 
 // Simple way to place pieces on the board
