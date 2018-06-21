@@ -19,8 +19,18 @@ class GameSquare {
 		this.displayText = false; // Should we show the board location?
 		this.showArrows = false; // Should we show all legal moves?
 	}
+
 	hasPiece() {
 		return (this.piece != null);
+	}
+
+	copy() {
+		let ret = new GameSquare(this.owner, this.ownerN, this.row, this.col, this.pos.x, this.pos.y, this.r, this.g, this.b);
+		ret.piece = this.piece;
+		ret.size = this.size;
+		ret.king = this.king;
+		ret.mustJump = this.mustJump;
+		return ret;
 	}
 }
 
@@ -61,33 +71,7 @@ GameSquare.prototype.showMoves = function() {
 	let target = (this.jumps.length > 0) ? this.jumps : this.neighbors;
 
 	for (let i = 0; i < target.length; i++) {
-		let offset = 7 / 5;
-		let arrowSize = 7;
-		let numRotates = 0;
-		let to = target[i];
-		push();
-		translate(this.pos.x + this.size / 2, this.pos.y + this.size / 2);
-		stroke(0, 200, 0);
-		rotate(PI / 4); // Default rotation to bottom left
-		// Figure out how many more rotations to do
-		if (to.row < this.row && to.col < this.col) {
-			numRotates = 1;
-		} else if (to.row < this.row && to.col > this.col) {
-			numRotates = 2;
-		} else if (to.row > this.row && to.col > this.col) {
-			numRotates = 3;
-		}
-		// Rotate until we are looking at the correct square
-		for (let i = 0; i < numRotates; i++) {
-			rotate(PI / 2);
-		}
-		let moveSize = this.size * offset * (abs(to.col - this.col) == 2 ? 2 : 1);
-		// Drawing the arrow
-		strokeWeight(2);
-		line(0, 0, 0, moveSize);
-		line(0, moveSize, -arrowSize, moveSize - arrowSize);
-		line(0, moveSize, arrowSize, moveSize - arrowSize);
-		pop();
+		drawArrowFromTo(this, target[i], color(0, 200, 0));
 	}
 }
 
