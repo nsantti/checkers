@@ -50,7 +50,7 @@ GameSquare.prototype.show = function() {
 		fill(0, 201, 10);
 	}
 	if (this.mustJump) { // Make the square white if they must jump
-		fill(255, 255, 255);
+		fill(245);
 	}
 	// Now that the color is figured out, we can draw the square
 	rect(this.pos.x, this.pos.y, this.size, this.size);

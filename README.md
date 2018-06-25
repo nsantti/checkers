@@ -13,9 +13,11 @@ This is classic checkers with an interactive UI. ***NOTE*** Must use p5js librar
   - Player can click a button to make a random move
   - Button available to watch a computer play against itself
   - Game Over screen has a button to play again
+    - Player colors are remembered for the next game
   - Button to see all available legal moves for current player
   - Undo button to undo the previous move
     - Can undo as many moves as wanted
+  - Main menu button returns to the main menu
 - Visual appeal
   - Squares are highlighted when the mouse is in them
   - Pieces that must jump are highlighted
@@ -31,17 +33,25 @@ This is classic checkers with an interactive UI. ***NOTE*** Must use p5js librar
   - Game Over screen
     - Displays the winner
     - Shows game stats such as how many moves total and number of pieces lost
+  - Main menu screen
+    - Players select the color they want to play as
 
 
 ### TODO:
 - Animate the pieces once a move is declared
-- Create a start screen
 - Let the players enter their name to play
-- Let the players select their color
-- Create socket for players to play online
-- Create AI for players to play against
+- Create smart AI for players to play against
 
 ### Updates made
+- 6/25/18
+  - Fixed undo button glitch where all pieces that can jump are highlighted after undoing a multi-jump move
+  - Added a start screen
+  - Added a pre-game screen
+    - Players select their color
+    - Players cannot select the same color
+  - Added a main menu button
+
+&nbsp;
 - 6/21/18
   - Added undo button to undo the previous move
     - Can keep undoing moves until back to game start state

@@ -17,6 +17,9 @@ let mustJump; // If a player jumps and can jump again, they must do it
 let canKeepJumping; // Tells us if the player can keep jumping with the piece they jumped with
 let gameOver; // Tells us if the game is over
 let GAMESTATE; // Tells us where in the game we are
+let MAINMENU; // Possible game state
+let PREGAME; // Possible game state
+let PLAYINGGAME; // Possible game state
 let liveButtons; // Data structure to keep track of buttons during the game
 let randomMoveButton; // Button to make a random move
 let watchComputerPlay; // Flags the code to make the computer play against itself
@@ -25,13 +28,14 @@ let showingCurrentMoves; // Flag to know if we are currently showing all the cur
 let toggleNumberButton; // Button to toggle showing the text or not
 let resetButton; // Button to reset the game
 let undoButton; // Button to undo the move
+let mainMenuButton; // Button to return to the main menu
 let JUMPEDPIECES; // Holds all jumped pieces
 let playerMoves; // What player goes for what turn
 
 
 
 // This function initializes all of the variables
-function reset(callback) {
+function reset(callback, p1color, p2color, state = 3) {
 	rows = 8;
 	cols = 8;
 	board = new Array(cols);
@@ -48,16 +52,20 @@ function reset(callback) {
 	mustJump = false;
 	canKeepJumping = false;
 	gameOver = false;
-	GAMESTATE = 1;
+	GAMESTATE = state;
+	MAINMENU = 0;
+	PREGAME = 1;
+	PLAYINGGAME = 2;
 	watchComputerPlay = false;
 	JUMPEDPIECES = [];
 	playerMoves = [];
 	liveButtons = [];
 	liveButtons.push(randomMoveButton = new NButton("Make a random move", width / 2 - 320, 10, 160, 50, false));
 	liveButtons.push(computerPlayButton = new NButton("Toggle computer play", width / 2 + 160, 10, 160, 50, false));
-	liveButtons.push(toggleNumberButton = new NButton("Numbers", 5, 10, 70, 50, false));
+	liveButtons.push(toggleNumberButton = new NButton("Numbers", 5, height, 70, 50, false));
 	liveButtons.push(resetButton = new NButton("Reset", width - 75, 10, 70, 50, false));
 	liveButtons.push(undoButton = new NButton("Undo", width - 75, 70, 70, 50, false));
+	liveButtons.push(mainMenuButton = new NButton("Main\nMenu", 5, 10, 70, 50, false));
 
 	for (let i = 0; i < cols; i++) {
 		board[i] = new Array(rows);
@@ -65,8 +73,8 @@ function reset(callback) {
 	// Creating the button to show all legal moves for current player
 	liveButtons.push(showMovesButton = new NButton("Show Current Player moves", width / 2 - 100, 10, 200, 50, false));
 
-	playerOne = new Player(color(145), "Player One");
-	playerTwo = new Player(color(244, 185, 66), "Player Two");
+	playerOne = new Player(p1color, "Player One");
+	playerTwo = new Player(p2color, "Player Two");
 	currentPlayer = playerOne;
 	playerMoves.push(playerOne);
 
@@ -79,6 +87,8 @@ function reset(callback) {
 		}
 	}
 	initVariables();
+	initStartScreen();
+	initPreGame();
 	if (callback instanceof Function) {
 		callback();
 	} else {
@@ -98,67 +108,74 @@ function reset(callback) {
 
 function setup() {
 	createCanvas(800, 800);
-	reset();
+	reset(mainBoard, color(0), color(0), 0);
 }
 
 function mousePressed() {
-	hideCurrentMoves();
 	// End Game Menu
-	checkButtons(mouseX, mouseY);
-
-	// Check if we are inside the gameboard
-	if (isInBounds(mouseX, mouseY)) {
-		// If we are, highlight the legal moves of the square we are on
-		currentSquare = getSquare(mouseX, mouseY);
-		if (currentSquare.owner !== currentPlayer) {
-			return;
-		}
-
-		if (currentSquare.hasPiece()) {
-			startMove = currentSquare;
-		}
-		if (getCurrentPlayer().mustJump(board) && !currentSquare.mustJump) {
-			currentSquare.showArrows = false;
-		} else {
-			currentSquare.showArrows = true;
-
+	if (GAMESTATE === MAINMENU) {
+		checkButtonsStart(mouseX, mouseY);
+	} else if (GAMESTATE === PREGAME) {
+		checkButtonsPreGame(mouseX, mouseY);
+	} else if (GAMESTATE === PLAYINGGAME) {
+		hideCurrentMoves();
+		checkButtons(mouseX, mouseY);
+		// Check if we are inside the gameboard
+		if (isInBounds(mouseX, mouseY)) {
+			// If we are, highlight the legal moves of the square we are on
+			currentSquare = getSquare(mouseX, mouseY);
+			if (currentSquare.owner !== currentPlayer) {
+				return;
+			}
+			if (currentSquare.hasPiece()) {
+				startMove = currentSquare;
+			}
+			if (getCurrentPlayer().mustJump(board) && !currentSquare.mustJump) {
+				currentSquare.showArrows = false;
+			} else {
+				currentSquare.showArrows = true;
+			}
 		}
 	}
+
 }
 
 // Checks each of the live game buttons to see if the user clicked them
 function checkButtons(x, y) {
-	if (gameOver) {
+	if (gameOver && GAMESTATE === PLAYINGGAME) {
 		if (playAgain.isInside(x, y)) {
-			reset();
+			reset(mainBoard, playerOne.color, playerTwo.color, PLAYINGGAME);
+		}
+		if (mainMenu.isInside(x, y)) {
+			reset(mainBoard, playerOne.color, playerTwo.color, MAINMENU);
 		}
 		return;
 	}
 	// Checking if we clicked any of the buttons
-	if (!gameOver) {
+	if (!gameOver && GAMESTATE === PLAYINGGAME) {
 		if (randomMoveButton.isInside(x, y)) {
 			makeRandomMove();
-			return;
 		}
 		if (computerPlayButton.isInside(x, y)) {
 			watchComputerPlay = !watchComputerPlay;
-			return;
 		}
 		if (showMovesButton.isInside(x, y)) {
 			if (!showingCurrentMoves) {
 				showCurrentMoves();
 				showingCurrentMoves = true;
 			}
-			return;
 		}
 		if (toggleNumberButton.isInside(x, y)) {
 			toggleNumbers();
 		}
 		if (resetButton.isInside(x, y)) {
-			reset();
+			reset(mainBoard, playerOne.color, playerTwo.color, PLAYINGGAME);
 		}
 		if (undoButton.isInside(x, y)) {
 			undo();
+		}
+		if (mainMenuButton.isInside(x, y)) {
+			reset(mainBoard, playerOne.color, playerTwo.color, MAINMENU);
 		}
 	}
 }
@@ -226,7 +243,7 @@ function undo() {
 	}
 	// We can jump, it isn't this first move, and we didn't just jump. Handles board12 edge case where
 	// if we have more than one piece that can jump, it will remember it when we undo the jump
-	else if (current.mustJump && moves.length > 0 && moves[moves.length - 1].fromCopy !== getCurrentPlayer()) {
+	else if (current.mustJump && moves.length > 0 && moves[moves.length - 1].fromCopy.owner !== getCurrentPlayer()) {
 		for (let eachMove of getCurrentPlayer().squaresOwned(board)) {
 			eachMove.generateNeighbors(board);
 		}
