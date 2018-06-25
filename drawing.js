@@ -5,21 +5,30 @@ let endingButtons; // Data structure to hold the ending buttons
 function initVariables() {
 	endingButtons = [];
 	endingButtons.push(playAgain = new NButton("Play Again", width - (8 * w) + w / 2, h + 75 * 6, 120, 55, true));
-	endingButtons.push(mainMenu = new NButton("Main Menu\n(does not work)", width - (4 * w), h + 75 * 6, 120, 55, true));
+	endingButtons.push(mainMenu = new NButton("Main Menu", width - (4 * w), h + 75 * 6, 120, 55, true));
 }
 
 function draw() {
 	background(50);
-	drawBoard();
-	drawArrow();
-	drawArrowMoves();
-	drawPlayerTurn();
-	drawCapturedPieces();
-	drawButtons(liveButtons);
-	if (frameCount % 1 === 0 && !gameOver && watchComputerPlay) {
-		makeRandomMove();
+	if (GAMESTATE === MAINMENU) {
+		drawStartScreen();
+	} else if (GAMESTATE === PREGAME) {
+		drawPreGame();
+	} else {
+		drawBoard();
+		drawArrow();
+		drawArrowMoves();
+		drawPlayerTurn();
+		drawCapturedPieces();
+		drawButtons(liveButtons);
+		if (frameCount % 1 === 0 && !gameOver && watchComputerPlay) {
+			makeRandomMove();
+		}
 	}
+
 }
+
+
 
 function drawArrowMoves() {
 	for (let i = 0; i < cols; i++) {
@@ -29,7 +38,7 @@ function drawArrowMoves() {
 	}
 }
 
-function drawBoard() { // Draw the board. Comment out the 'showText' part if you don't want grid numbers
+function drawBoard() { // Draw the board
 	for (let i = 0; i < cols; i++) {
 		for (let j = 0; j < rows; j++) {
 			board[i][j].show();
@@ -50,6 +59,7 @@ function drawButtons(anArray) {
 }
 
 function drawPlayerTurn() { // Draws the player's turn at the bottom of the screen
+	push();
 	textSize(20);
 	fill(255);
 	textAlign(CENTER);
@@ -68,6 +78,7 @@ function drawPlayerTurn() { // Draws the player's turn at the bottom of the scre
 	ellipse((width - (8 * w)) + playerOne.name.length + 20, height - 50, 30);
 	fill(playerTwo.color);
 	ellipse(width - (width - (8 * w)) + playerTwo.name.length + 70, height - 50, 30);
+	pop();
 }
 
 function drawEndingScreen() {
@@ -75,15 +86,20 @@ function drawEndingScreen() {
 	fill(50, 225);
 	stroke(255);
 	rect(width - (8 * w), h + 75, width / 2 + w, height / 2 + h);
-	let winner = (playerOne.won == true) ? playerOne.name : (playerTwo.won == true) ? playerTwo.name : "TIE!";
+	let message = "Game Over, ";
+	if (playerOne.won) {
+		message += playerOne.name + " Won!";
+	} else if (playerTwo.won) {
+		message += playerTwo.name + " Won!";
+	} else {
+		message += "TIE!";
+	}
 	noStroke();
 	fill(255);
 	textSize(30);
-	if (winner === "TIE!") {
-		text("Game Over, " + winner, width / 2, h + 75 * 2);
-	} else {
-		text("Game Over, " + winner + " Won", width / 2, h + 75 * 2);
-	}
+
+	text(message, width / 2, h + 75 * 2);
+
 	textSize(24);
 	textAlign(LEFT);
 	text("Total Moves: " + moves.length, width / 2 - w * 2.5, h + 75 * 3);
