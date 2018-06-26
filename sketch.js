@@ -12,6 +12,7 @@ let endMove; // The ending square for a gamemove
 let moves = []; // Keeps track of each move
 let playerOne; // Creating players
 let playerTwo;
+let ai; // An AI for players to play against
 let currentPlayer; // A way to toggle back and forth between players
 let mustJump; // If a player jumps and can jump again, they must do it
 let canKeepJumping; // Tells us if the player can keep jumping with the piece they jumped with
@@ -35,7 +36,7 @@ let playerMoves; // What player goes for what turn
 
 
 // This function initializes all of the variables
-function reset(callback, p1color, p2color, state = 3) {
+function reset(callback, p1color = color(145), p2color = color(244, 185, 66), state = 2) {
 	rows = 8;
 	cols = 8;
 	board = new Array(cols);
@@ -74,7 +75,8 @@ function reset(callback, p1color, p2color, state = 3) {
 	liveButtons.push(showMovesButton = new NButton("Show Current Player moves", width / 2 - 100, 10, 200, 50, false));
 
 	playerOne = new Player(p1color, "Player One");
-	playerTwo = new Player(p2color, "Player Two");
+	//playerTwo = new Player(p2color, "Player Two");
+	playerTwo = new AI(p2color);
 	currentPlayer = playerOne;
 	playerMoves.push(playerOne);
 
@@ -108,7 +110,8 @@ function reset(callback, p1color, p2color, state = 3) {
 
 function setup() {
 	createCanvas(800, 800);
-	reset(mainBoard, color(0), color(0), 0);
+	//reset(mainBoard, color(0), color(0), 0);
+	reset(mainBoard, color(145), color(244, 185, 66), 2);
 }
 
 function mousePressed() {
@@ -252,6 +255,8 @@ function undo() {
 
 function makeMove(start, stop) {
 	hideCurrentMoves();
+	startMove = start;
+	endMove = stop;
 	// Making the move
 	let theMove = new GameMove(getCurrentPlayer(), startMove, endMove);
 	// console.log("Player " + startMove.ownerN + " Moved from (" + startMove.row + ", " +

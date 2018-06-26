@@ -32,6 +32,23 @@ class GameSquare {
 		ret.mustJump = this.mustJump;
 		return ret;
 	}
+
+	fourNeighbors() {
+		let ret = [];
+		if (getCurrentPlayer().canAccess(this.row + 1, this.col + 1)) {
+			ret.push(board[this.row + 1][this.col + 1]);
+		}
+		if (getCurrentPlayer().canAccess(this.row - 1, this.col + 1)) {
+			ret.push(board[this.row - 1][this.col + 1]);
+		}
+		if (getCurrentPlayer().canAccess(this.row + 1, this.col - 1)) {
+			ret.push(board[this.row + 1][this.col - 1]);
+		}
+		if (getCurrentPlayer().canAccess(this.row - 1, this.col - 1)) {
+			ret.push(board[this.row - 1][this.col - 1]);
+		}
+		return ret;
+	}
 }
 
 

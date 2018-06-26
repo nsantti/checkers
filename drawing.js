@@ -1,8 +1,10 @@
 let playAgain; // Button to play again the game is over
 let mainMenu; // Button to return to the main menu when the game is over
 let endingButtons; // Data structure to hold the ending buttons
+let counter; // My own framerate variable
 
 function initVariables() {
+	counter = 0;
 	endingButtons = [];
 	endingButtons.push(playAgain = new NButton("Play Again", width - (8 * w) + w / 2, h + 75 * 6, 120, 55, true));
 	endingButtons.push(mainMenu = new NButton("Main Menu", width - (4 * w), h + 75 * 6, 120, 55, true));
@@ -24,10 +26,17 @@ function draw() {
 		if (frameCount % 1 === 0 && !gameOver && watchComputerPlay) {
 			makeRandomMove();
 		}
+		if (getCurrentPlayer() === playerTwo) {
+			counter++;
+			if (!gameOver && counter > 60 && typeof playerTwo.move !== 'undefined' && !watchComputerPlay) {
+				console.log(counter);
+				playerTwo.move();
+				counter = 0;
+			}
+		}
+
 	}
-
 }
-
 
 
 function drawArrowMoves() {
