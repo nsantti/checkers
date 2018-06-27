@@ -1,8 +1,10 @@
 let playAgain; // Button to play again the game is over
 let mainMenu; // Button to return to the main menu when the game is over
 let endingButtons; // Data structure to hold the ending buttons
+let counter; // My own framerate variable
 
 function initVariables() {
+	counter = 0;
 	endingButtons = [];
 	endingButtons.push(playAgain = new NButton("Play Again", width - (8 * w) + w / 2, h + 75 * 6, 120, 55, true));
 	endingButtons.push(mainMenu = new NButton("Main Menu", width - (4 * w), h + 75 * 6, 120, 55, true));
@@ -12,7 +14,7 @@ function draw() {
 	background(50);
 	if (GAMESTATE === MAINMENU) {
 		drawStartScreen();
-	} else if (GAMESTATE === PREGAME) {
+	} else if (GAMESTATE === PREGAME || GAMESTATE === PREGAMEAI) {
 		drawPreGame();
 	} else {
 		drawBoard();
@@ -24,10 +26,17 @@ function draw() {
 		if (frameCount % 1 === 0 && !gameOver && watchComputerPlay) {
 			makeRandomMove();
 		}
+
+		if (getCurrentPlayer() === playerTwo) {
+			counter++;
+			if (!gameOver && counter > 50 && typeof getCurrentPlayer().move !== 'undefined' && !watchComputerPlay) {
+				getCurrentPlayer().move();
+				counter = 0;
+			}
+		}
+
 	}
-
 }
-
 
 
 function drawArrowMoves() {
@@ -107,6 +116,8 @@ function drawEndingScreen() {
 	text(playerTwo.name + " pieces lost: " + playerOne.capturedPieces.length, width / 2 - w * 2.5, h + 75 * 5);
 	drawButtons(endingButtons);
 	pop();
+	//reset(mainBoard, playerOne.color, playerTwo.color, PLAYINGGAME, aiPlaying);
+
 }
 
 function drawArrow() { // Draws the arrow to show previous turn

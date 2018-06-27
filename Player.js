@@ -9,6 +9,13 @@ class Player {
 		this.capturedPieces = []; // A list of pieces the player has captured
 	}
 
+	canAccess(row, col) {
+		if (row >= 0 && row < 8 && col >= 0 && col < 8) {
+			return true;
+		} else {
+			return false;
+		}
+	}
 
 	// Tells us if the player must jump
 	mustJump(board) {

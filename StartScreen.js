@@ -1,9 +1,9 @@
-let playButton; // Button to start the game
-let p1ColorButton; // Button to select player one color
-let p2ColorButton; // Button to select player two color
+let playAloneButton; // Button to start the game
+let playComputerButton; // Button to start game against computer
 
 function initStartScreen() {
-	playButton = new NButton("Play", width / 2 - 100, height / 2, 200, 100, false, 25);
+	playAloneButton = new NButton("Play with a\r\nfriend", width / 2 - 300, height / 2, 200, 100, false, 25);
+	playComputerButton = new NButton("Play against the\r\ncomputer", width / 2 + 100, height / 2, 200, 100, false, 25);
 }
 
 function drawStartScreen() {
@@ -40,13 +40,17 @@ function drawMadeBy() {
 }
 
 function drawStartButtons() {
-	playButton.show();
-	playButton.isInside(mouseX, mouseY);
+	playAloneButton.show();
+	playAloneButton.isInside(mouseX, mouseY);
+	playComputerButton.show();
+	playComputerButton.isInside(mouseX, mouseY);
 }
 
 function checkButtonsStart(x, y) {
-	if (playButton.isInside(x, y) && GAMESTATE === MAINMENU) {
+	if (playAloneButton.isInside(x, y) && GAMESTATE === MAINMENU) {
 		GAMESTATE = PREGAME;
+	} else if (playComputerButton.isInside(x, y) && GAMESTATE === MAINMENU) {
+		GAMESTATE = PREGAMEAI;
 	}
 }
 

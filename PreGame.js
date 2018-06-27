@@ -2,9 +2,11 @@ let startButton; // Button when we actually start the game
 let buttonPalletLeft; // Color options for player one
 let buttonPalletRight; // Color options for player two
 let colorsSelected; // What colors did we select?
+let preGameMainMenu; // Main Menu button for pregame screen.
 
 function initPreGame() {
 	startButton = new NButton("Start", width / 2 - 75, height - 100, 150, 75, false, 25);
+	preGameMainMenu = new NButton("Main Menu", 50, height - 100, 150, 75, false, 25);
 	buttonPalletLeft = [];
 	buttonPalletRight = [];
 	createButtonPallet(50, 250, buttonPalletLeft);
@@ -27,13 +29,23 @@ function drawPreGame() {
 function drawPreGameButtons() {
 	startButton.show();
 	startButton.isInside(mouseX, mouseY);
+	preGameMainMenu.show();
+	preGameMainMenu.isInside(mouseX, mouseY);
 }
 
 function checkButtonsPreGame(x, y) {
 	if (startButton.isInside(x, y)) {
-		GAMESTATE = PLAYINGGAME;
-		playerOne.color = color(colorsSelected.p1col);
-		playerTwo.color = color(colorsSelected.p2col);
+		if (GAMESTATE === PREGAMEAI) {
+			aiPlaying = true;
+			reset(mainBoard, color(colorsSelected.p1col), color(colorsSelected.p2col), PLAYINGGAME, true);
+		} else {
+			aiPlaying = false;
+			reset(mainBoard, color(colorsSelected.p1col), color(colorsSelected.p2col), PLAYINGGAME, false);
+		}
+
+	} else if (preGameMainMenu.isInside(x, y)) {
+		reset(mainBoard, playerOne.color, playerTwo.color, MAINMENU, aiPlaying);
+
 	} else {
 		checkButtonPallet(x, y);
 	}
@@ -53,7 +65,6 @@ function checkButtonPallet(x, y) {
 					col.selected = true;
 				}
 			}
-
 		}
 	} else {
 		for (let col of buttonPalletRight) {
@@ -105,7 +116,11 @@ function drawPlayerTwoSide() {
 	fill(255);
 	textAlign(LEFT);
 	textSize(30);
-	text("Player Two", width - 80 - textWidth("Player Two"), 150);
+	if (GAMESTATE === PREGAMEAI) {
+		text("Computer", width - 80 - textWidth("Computer"), 150);
+	} else {
+		text("Player Two", width - 80 - textWidth("Player Two"), 150);
+	}
 	stroke(255);
 	line(width - 20, 160, width - 280, 160);
 	textSize(25);

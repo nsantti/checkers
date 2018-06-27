@@ -40,9 +40,19 @@ This is classic checkers with an interactive UI. ***NOTE*** Must use p5js librar
 ### TODO:
 - Animate the pieces once a move is declared
 - Let the players enter their name to play
-- Create smart AI for players to play against
+- Let the player select difficulty for AI (easy is random, hard is smart AI)
 
 ### Updates made
+- 6/27/18
+  - Added an AI for the player to play against
+    - The AI generates a score for each possible move, then executes the best move possible
+    - AI always takes one second to make its move
+    - Wins 95% of games against a random moves player (Ties 4% of the time, Loses 1%)
+  - Main menu button added to pregame screen
+  - Diabled 'Watch Computer Play' button when playing aginst an AI
+  
+
+&nbsp;
 - 6/25/18
   - Fixed undo button glitch where all pieces that can jump are highlighted after undoing a multi-jump move
   - Added a start screen
@@ -58,7 +68,7 @@ This is classic checkers with an interactive UI. ***NOTE*** Must use p5js librar
     - Pieces are removed from the side if player is undoing a jump
   - Pressing 'u' will undo the previous move
   - Pressing 's' will show all legal moves for the current player
-  
+
 &nbsp;
 - 6/19/18
   - Added button to show grid square numbers
@@ -74,7 +84,7 @@ This is classic checkers with an interactive UI. ***NOTE*** Must use p5js librar
   - Can use the online P5 library now, no need to download it
   - Created button to highlight all legal moves for current player
   - Current player can no longer see moves for other player
-  
+
   &nbsp;
 - 6/14/18
   - Created custom button class
@@ -83,7 +93,7 @@ This is classic checkers with an interactive UI. ***NOTE*** Must use p5js librar
   - Added random move button
   - Added button to watch computer play
   - Games end after 200 moves without a winner (TIE)
-  
+
   &nbsp;
 - 6/12/18
   - Players now have a list of pieces they've captured
@@ -99,4 +109,3 @@ This is classic checkers with an interactive UI. ***NOTE*** Must use p5js librar
   - Increased font size
   - Made reset function
   - Got rid of redundant code
-  

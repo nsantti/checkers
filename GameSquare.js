@@ -32,6 +32,43 @@ class GameSquare {
 		ret.mustJump = this.mustJump;
 		return ret;
 	}
+
+	fourNeighbors() {
+		let ret = [];
+		if (getCurrentPlayer().canAccess(this.row + 1, this.col + 1)) {
+			if (board[this.row + 1][this.col + 1].owner === getCurrentPlayer()) {
+				ret.push({
+					loc: board[this.row + 1][this.col + 1],
+					pos: "BOTTOMRIGHT"
+				});
+			}
+		}
+		if (getCurrentPlayer().canAccess(this.row - 1, this.col + 1)) {
+			if (board[this.row - 1][this.col + 1].owner === getCurrentPlayer()) {
+				ret.push({
+					loc: board[this.row - 1][this.col + 1],
+					pos: "TOPRIGHT"
+				});
+			}
+		}
+		if (getCurrentPlayer().canAccess(this.row + 1, this.col - 1)) {
+			if (board[this.row + 1][this.col - 1].owner === getCurrentPlayer()) {
+				ret.push({
+					loc: board[this.row + 1][this.col - 1],
+					pos: "BOTTOMLEFT"
+				});
+			}
+		}
+		if (getCurrentPlayer().canAccess(this.row - 1, this.col - 1)) {
+			if (board[this.row - 1][this.col - 1].owner === getCurrentPlayer()) {
+				ret.push({
+					loc: board[this.row - 1][this.col - 1],
+					pos: "TOPLEFT"
+				});
+			}
+		}
+		return ret;
+	}
 }
 
 
