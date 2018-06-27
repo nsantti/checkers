@@ -20,23 +20,32 @@ class AI extends Player {
 	scoreMove(from, to) {
 		let score = 0;
 		let immediateNeighbors = from.fourNeighbors();
+		let safe = true;
 		// Is the piece in danger of being jumped?
 		if (this.canAlreadyBeJumped(from)) {
-			score += 100;
+			safe = false;
+			score += 1;
 		}
 		// Will this piece be jumped if it moves?
 		if (this.canBeJumped(from, to)) {
-			score -= 200;
+			score -= 4;
+			safe = false;
 		}
 		// Will another piece be jumped if this moves?
 		for (let i = 0; i < immediateNeighbors.length; i++) {
-			if (this.canAlreadyBeJumped(immediateNeighbors[i])) {
-				score -= 50;
+			if (this.willBeJumped(immediateNeighbors[i])) {
+				score -= 2;
+				safe = false;
 			}
 		}
-
-
-		return score; //+ random() * 100;
+		if (safe) {
+			if (!from.king) {
+				score += 1.5;
+			} else if (to.col < 2 || to.col > 5) {
+				score += 1;
+			}
+		}
+		return score;
 	}
 
 	canBeJumped(from, to) {
@@ -80,8 +89,40 @@ class AI extends Player {
 		return false;
 	}
 
-	willBeJumped(from, to) {
-
+	willBeJumped(square) {
+		let row = square.loc.row;
+		let col = square.loc.col;
+		let target = square.pos;
+		// Top left
+		if (target === "TOPLEFT") {
+			if (this.canAccess(row - 1, col - 1)) {
+				if (board[row - 1][col - 1].ownerN === 1) {
+					return true;
+				}
+			}
+		}
+		if (target === "TOPRIGHT") {
+			if (this.canAccess(row - 1, col + 1)) {
+				if (board[row - 1][col + 1].ownerN === 1) {
+					return true;
+				}
+			}
+		}
+		if (target === "BOTTOMLEFT") {
+			if (this.canAccess(row + 1, col - 1)) {
+				if (board[row + 1][col - 1].ownerN === 1 && board[row + 1][col - 1].king) {
+					return true;
+				}
+			}
+		}
+		if (target === "BOTTOMRIGHT") {
+			if (this.canAccess(row + 1, col + 1)) {
+				if (board[row + 1][col + 1].ownerN === 1 && board[row + 1][col + 1].king) {
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 
 	canAlreadyBeJumped(from) {

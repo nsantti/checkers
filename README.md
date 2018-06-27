@@ -58,7 +58,7 @@ This is classic checkers with an interactive UI. ***NOTE*** Must use p5js librar
     - Pieces are removed from the side if player is undoing a jump
   - Pressing 'u' will undo the previous move
   - Pressing 's' will show all legal moves for the current player
-  
+
 &nbsp;
 - 6/19/18
   - Added button to show grid square numbers
@@ -74,7 +74,7 @@ This is classic checkers with an interactive UI. ***NOTE*** Must use p5js librar
   - Can use the online P5 library now, no need to download it
   - Created button to highlight all legal moves for current player
   - Current player can no longer see moves for other player
-  
+
   &nbsp;
 - 6/14/18
   - Created custom button class
@@ -83,7 +83,7 @@ This is classic checkers with an interactive UI. ***NOTE*** Must use p5js librar
   - Added random move button
   - Added button to watch computer play
   - Games end after 200 moves without a winner (TIE)
-  
+
   &nbsp;
 - 6/12/18
   - Players now have a list of pieces they've captured
@@ -99,4 +99,3 @@ This is classic checkers with an interactive UI. ***NOTE*** Must use p5js librar
   - Increased font size
   - Made reset function
   - Got rid of redundant code
-  

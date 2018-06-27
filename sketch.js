@@ -21,6 +21,7 @@ let GAMESTATE; // Tells us where in the game we are
 let MAINMENU; // Possible game state
 let PREGAME; // Possible game state
 let PLAYINGGAME; // Possible game state
+let PREGAMEAI;
 let liveButtons; // Data structure to keep track of buttons during the game
 let randomMoveButton; // Button to make a random move
 let watchComputerPlay; // Flags the code to make the computer play against itself
@@ -32,11 +33,12 @@ let undoButton; // Button to undo the move
 let mainMenuButton; // Button to return to the main menu
 let JUMPEDPIECES; // Holds all jumped pieces
 let playerMoves; // What player goes for what turn
+let aiPlaying; // Is an ai playing?
 
 
 
 // This function initializes all of the variables
-function reset(callback, p1color = color(145), p2color = color(244, 185, 66), state = 2) {
+function reset(callback, p1color = color(145), p2color = color(244, 185, 66), state = 2, ai = false) {
 	rows = 8;
 	cols = 8;
 	board = new Array(cols);
@@ -57,15 +59,18 @@ function reset(callback, p1color = color(145), p2color = color(244, 185, 66), st
 	MAINMENU = 0;
 	PREGAME = 1;
 	PLAYINGGAME = 2;
+	PREGAMEAI = 3;
 	watchComputerPlay = false;
+	aiPlaying = ai;
 	JUMPEDPIECES = [];
 	playerMoves = [];
 	liveButtons = [];
-	liveButtons.push(randomMoveButton = new NButton("Make a random move", width / 2 - 320, 10, 160, 50, false));
-	liveButtons.push(computerPlayButton = new NButton("Toggle computer play", width / 2 + 160, 10, 160, 50, false));
+	computerPlayButton = undefined;
+
 	liveButtons.push(toggleNumberButton = new NButton("Numbers", 5, height, 70, 50, false));
 	liveButtons.push(resetButton = new NButton("Reset", width - 75, 10, 70, 50, false));
 	liveButtons.push(undoButton = new NButton("Undo", width - 75, 70, 70, 50, false));
+	liveButtons.push(randomMoveButton = new NButton("Make a random move", width / 2 - 320, 10, 160, 50, false));
 	liveButtons.push(mainMenuButton = new NButton("Main\nMenu", 5, 10, 70, 50, false));
 
 	for (let i = 0; i < cols; i++) {
@@ -75,8 +80,13 @@ function reset(callback, p1color = color(145), p2color = color(244, 185, 66), st
 	liveButtons.push(showMovesButton = new NButton("Show Current Player moves", width / 2 - 100, 10, 200, 50, false));
 
 	playerOne = new Player(p1color, "Player One");
-	//playerTwo = new Player(p2color, "Player Two");
-	playerTwo = new AI(p2color);
+	if (aiPlaying) {
+		playerTwo = new AI(p2color);
+	} else {
+		liveButtons.push(computerPlayButton = new NButton("Toggle computer play", width / 2 + 160, 10, 160, 50, false));
+
+		playerTwo = new Player(p2color, "Player Two");
+	}
 	currentPlayer = playerOne;
 	playerMoves.push(playerOne);
 
@@ -110,15 +120,15 @@ function reset(callback, p1color = color(145), p2color = color(244, 185, 66), st
 
 function setup() {
 	createCanvas(800, 800);
-	//reset(mainBoard, color(0), color(0), 0);
-	reset(mainBoard, color(145), color(244, 185, 66), 2);
+	reset(mainBoard, color(0), color(0), 0, false);
+	//reset(mainBoard, color(145), color(244, 185, 66), 2);
 }
 
 function mousePressed() {
 	// End Game Menu
 	if (GAMESTATE === MAINMENU) {
 		checkButtonsStart(mouseX, mouseY);
-	} else if (GAMESTATE === PREGAME) {
+	} else if (GAMESTATE === PREGAME || GAMESTATE === PREGAMEAI) {
 		checkButtonsPreGame(mouseX, mouseY);
 	} else if (GAMESTATE === PLAYINGGAME) {
 		hideCurrentMoves();
@@ -147,19 +157,19 @@ function mousePressed() {
 function checkButtons(x, y) {
 	if (gameOver && GAMESTATE === PLAYINGGAME) {
 		if (playAgain.isInside(x, y)) {
-			reset(mainBoard, playerOne.color, playerTwo.color, PLAYINGGAME);
+			reset(mainBoard, playerOne.color, playerTwo.color, PLAYINGGAME, aiPlaying);
 		}
 		if (mainMenu.isInside(x, y)) {
-			reset(mainBoard, playerOne.color, playerTwo.color, MAINMENU);
+			reset(mainBoard, playerOne.color, playerTwo.color, MAINMENU, aiPlaying);
 		}
 		return;
 	}
 	// Checking if we clicked any of the buttons
 	if (!gameOver && GAMESTATE === PLAYINGGAME) {
-		if (randomMoveButton.isInside(x, y)) {
+		if (getCurrentPlayer() === playerOne && randomMoveButton.isInside(x, y)) {
 			makeRandomMove();
 		}
-		if (computerPlayButton.isInside(x, y)) {
+		if (!aiPlaying && computerPlayButton.isInside(x, y)) {
 			watchComputerPlay = !watchComputerPlay;
 		}
 		if (showMovesButton.isInside(x, y)) {
@@ -172,13 +182,13 @@ function checkButtons(x, y) {
 			toggleNumbers();
 		}
 		if (resetButton.isInside(x, y)) {
-			reset(mainBoard, playerOne.color, playerTwo.color, PLAYINGGAME);
+			reset(mainBoard, playerOne.color, playerTwo.color, PLAYINGGAME, aiPlaying);
 		}
 		if (undoButton.isInside(x, y)) {
 			undo();
 		}
 		if (mainMenuButton.isInside(x, y)) {
-			reset(mainBoard, playerOne.color, playerTwo.color, MAINMENU);
+			reset(mainBoard, playerOne.color, playerTwo.color, MAINMENU, aiPlaying);
 		}
 	}
 }

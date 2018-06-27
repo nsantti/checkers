@@ -14,7 +14,7 @@ function draw() {
 	background(50);
 	if (GAMESTATE === MAINMENU) {
 		drawStartScreen();
-	} else if (GAMESTATE === PREGAME) {
+	} else if (GAMESTATE === PREGAME || GAMESTATE === PREGAMEAI) {
 		drawPreGame();
 	} else {
 		drawBoard();
