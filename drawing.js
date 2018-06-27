@@ -103,7 +103,6 @@ function drawEndingScreen() {
 	} else {
 		message += "TIE!";
 	}
-	console.log(message);
 	noStroke();
 	fill(255);
 	textSize(30);
