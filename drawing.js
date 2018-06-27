@@ -26,11 +26,11 @@ function draw() {
 		if (frameCount % 1 === 0 && !gameOver && watchComputerPlay) {
 			makeRandomMove();
 		}
+
 		if (getCurrentPlayer() === playerTwo) {
 			counter++;
-			if (!gameOver && counter > 60 && typeof playerTwo.move !== 'undefined' && !watchComputerPlay) {
-				console.log(counter);
-				playerTwo.move();
+			if (!gameOver && counter > 50 && typeof getCurrentPlayer().move !== 'undefined' && !watchComputerPlay) {
+				getCurrentPlayer().move();
 				counter = 0;
 			}
 		}
@@ -103,6 +103,7 @@ function drawEndingScreen() {
 	} else {
 		message += "TIE!";
 	}
+	console.log(message);
 	noStroke();
 	fill(255);
 	textSize(30);
@@ -116,6 +117,8 @@ function drawEndingScreen() {
 	text(playerTwo.name + " pieces lost: " + playerOne.capturedPieces.length, width / 2 - w * 2.5, h + 75 * 5);
 	drawButtons(endingButtons);
 	pop();
+	//reset(mainBoard, playerOne.color, playerTwo.color, PLAYINGGAME, aiPlaying);
+
 }
 
 function drawArrow() { // Draws the arrow to show previous turn
