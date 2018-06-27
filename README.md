@@ -40,9 +40,19 @@ This is classic checkers with an interactive UI. ***NOTE*** Must use p5js librar
 ### TODO:
 - Animate the pieces once a move is declared
 - Let the players enter their name to play
-- Create smart AI for players to play against
+- Let the player select difficulty for AI (easy is random, hard is smart AI)
 
 ### Updates made
+- 6/27/18
+  - Added an AI for the player to play against
+    - The AI generates a score for each possible move, then executes the best move possible
+    - AI always takes one second to make its move
+    - Wins 95% of games against a random moves player (Ties 4% of the time, Loses 1%)
+  - Main menu button added to pregame screen
+  - Diabled 'Watch Computer Play' button when playing aginst an AI
+  
+
+&nbsp;
 - 6/25/18
   - Fixed undo button glitch where all pieces that can jump are highlighted after undoing a multi-jump move
   - Added a start screen
