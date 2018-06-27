@@ -35,6 +35,10 @@ This is classic checkers with an interactive UI. ***NOTE*** Must use p5js librar
     - Shows game stats such as how many moves total and number of pieces lost
   - Main menu screen
     - Players select the color they want to play as
+- AI
+ - The AI generates a score for each possible move, then executes the best move possible
+ - Always takes one second to make its move
+ - Wins 95% of games against a random moves player (Ties 4% of the time, Loses 1%)
 
 
 ### TODO:
