@@ -1,51 +1,88 @@
 class AI extends Player {
-	constructor(color) {
-		super(color, "Computer");
+	constructor(color, name, weights) {
+		super(color, name);
+		//[5, -4, -2, 0.5, 1, 0.5] default weights
+		this.weights = weights;
+		this.results = {
+			won: 0,
+			lost: 0,
+			tie: 0
+		};
+		this.pMoves = [];
 	}
 
 	move() {
 		// Get list of all possible moves
 		let possibleMoves = this.getAllMoves();
+		let otherPlayerMoves = getOtherPlayer().squaresOwned(board);
 
 		// Apply a score to each move
 		for (let eachMove of possibleMoves) {
-			eachMove.score = this.scoreMove(eachMove.from, eachMove.to);
+			eachMove.score = this.scoreMove(eachMove.from, eachMove.to, otherPlayerMoves);
 		}
-		console.log(possibleMoves);
+		// If we can cover up a potential jump, do it.
+		otherPlayerMoves = otherPlayerMoves.filter(square => square.jumps.length > 0);
+		for (let i = 0; i < otherPlayerMoves.length; i++) {
+			for (let j = 0; j < otherPlayerMoves[i].jumps.length; j++) {
+				for (let k = 0; k < possibleMoves.length; k++) {
+					if (possibleMoves[k].to === otherPlayerMoves[i].jumps[j]) {
+						possibleMoves[k].score += this.weights[6];
+					}
+				}
+			}
+		}
+		this.pMoves = possibleMoves;
+
+		//console.log("Player Two: ", possibleMoves);
+
 		// Make the move with the highest score
 		let theMove = this.getBestMove(possibleMoves);
 		makeMove(theMove.from, theMove.to);
 	}
 
-	scoreMove(from, to) {
+	scoreMove(from, to, arr) {
 		let score = 0;
 		let immediateNeighbors = from.fourNeighbors();
 		let safe = true;
+
 		// Is the piece in danger of being jumped?
 		if (this.canAlreadyBeJumped(from)) {
 			safe = false;
-			score += 1;
+			score += this.weights[0];
 		}
 		// Will this piece be jumped if it moves?
 		if (this.canBeJumped(from, to)) {
-			score -= 4;
+			score += this.weights[1];
 			safe = false;
 		}
 		// Will another piece be jumped if this moves?
 		for (let i = 0; i < immediateNeighbors.length; i++) {
 			if (this.willBeJumped(immediateNeighbors[i])) {
-				score -= 2;
+				score += this.weights[2];
 				safe = false;
 			}
 		}
+
 		if (safe) {
-			if (!from.king) {
-				score += 1.5;
+			if (!from.king && from.row === 7) {
+				score += this.weights[3];
+			} else if (!from.king) {
+				score += this.weights[4];
+				if (random() < 0.4) {
+					score += (map(to.row, 0, 7, 0.5, 0));
+				}
 			} else if (to.col < 2 || to.col > 5) {
-				score += 1;
+				score += this.weights[5];
 			}
 		}
 		return score;
+	}
+
+	getSafeSpot(from, to) {
+		// If top left to bottom right
+		if (this.canAccess()) {
+
+		}
 	}
 
 	canBeJumped(from, to) {
@@ -63,7 +100,7 @@ class AI extends Player {
 				}
 			}
 			if (BOTTOMRIGHT.ownerN === 1 && BOTTOMRIGHT.king) {
-				if (TOPLEFT.ownerN === 0) {
+				if (TOPLEFT === from || TOPLEFT.ownerN === 0) {
 					return true;
 				}
 			}
@@ -81,7 +118,7 @@ class AI extends Player {
 				}
 			}
 			if (BOTTOMLEFT.ownerN === 1 && BOTTOMLEFT.king) {
-				if (TOPRIGHT.ownerN === 0) {
+				if (TOPRIGHT === from || TOPRIGHT.ownerN === 0) {
 					return true;
 				}
 			}
@@ -129,7 +166,7 @@ class AI extends Player {
 		let row = from.row;
 		let col = from.col;
 		// Top left to bottom right jump or bottom right to top left
-		if (row - 1 >= 0 && col - 1 >= 0 && row + 1 < 8 && col + 1 < 8) {
+		if (this.canAccess(row - 1, col - 1) && this.canAccess(row + 1, col + 1)) {
 			if (board[row - 1][col - 1].ownerN === 1 && board[row + 1][col + 1].ownerN === 0) {
 				return true;
 			} else if (board[row + 1][col + 1].ownerN === 1 && board[row + 1][col + 1].king && board[row - 1][col - 1].ownerN === 0) {
@@ -137,7 +174,7 @@ class AI extends Player {
 			}
 		}
 
-		if (row - 1 >= 0 && col + 1 < 8 && row + 1 < 8 && col - 1 >= 0) {
+		if (this.canAccess(row - 1, col + 1) && this.canAccess(row + 1, col - 1)) {
 			if (board[row - 1][col + 1].ownerN === 1 && board[row + 1][col - 1].ownerN === 0) {
 				return true;
 			} else if (board[row + 1][col - 1].ownerN === 1 && board[row + 1][col - 1].king && board[row - 1][col + 1].ownerN === 0) {
@@ -166,34 +203,5 @@ class AI extends Player {
 		return random(potentialMoves);
 	}
 
-	getAllMoves() {
-		let allMoves = this.squaresOwned(board);
-		let theMoves = [];
-		if (this.mustJump(board)) {
-			for (let move of allMoves) {
-				if (move.jumps.length > 0) {
-					for (let dest of move.jumps) {
-						theMoves.push({
-							from: move,
-							to: dest,
-							score: 0
-						});
-					}
-				}
-			}
-		} else {
-			for (let move of allMoves) {
-				if (move.neighbors.length > 0) {
-					for (let dest of move.neighbors) {
-						theMoves.push({
-							from: move,
-							to: dest,
-							score: 0
-						});
-					}
-				}
-			}
-		}
-		return theMoves;
-	}
+
 }

@@ -71,4 +71,35 @@ class Player {
 		return owned;
 	}
 
+	getAllMoves() {
+		let allMoves = this.squaresOwned(board);
+		let theMoves = [];
+		if (this.mustJump(board)) {
+			for (let move of allMoves) {
+				if (move.jumps.length > 0) {
+					for (let dest of move.jumps) {
+						theMoves.push({
+							from: move,
+							to: dest,
+							score: 0
+						});
+					}
+				}
+			}
+		} else {
+			for (let move of allMoves) {
+				if (move.neighbors.length > 0) {
+					for (let dest of move.neighbors) {
+						theMoves.push({
+							from: move,
+							to: dest,
+							score: 0
+						});
+					}
+				}
+			}
+		}
+		return theMoves;
+	}
+
 }
