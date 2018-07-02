@@ -1,9 +1,11 @@
 let playAloneButton; // Button to start the game
 let playComputerButton; // Button to start game against computer
+let howToButton; // Button for the game rules
 
 function initStartScreen() {
 	playAloneButton = new NButton("Play with a\r\nfriend", width / 2 - 300, height / 2, 200, 100, false, 25);
 	playComputerButton = new NButton("Play against the\r\ncomputer", width / 2 + 100, height / 2, 200, 100, false, 25);
+	howToButton = new NButton("How to Play", width / 2 - 100, height - 200, 200, 100, false, 25);
 }
 
 function drawStartScreen() {
@@ -25,7 +27,7 @@ function drawWords() {
 	let offset = -140;
 	let message = "CHECKERS";
 	for (let i = 0; i < message.length; i++) {
-		(i % 2 == 0) ? fill(215, 0, 0): fill(0);
+		(i % 2 === 0) ? fill(215, 0, 0): fill(0);
 		text(message[i] + "", width / 2 + gap * i + offset, 80);
 	}
 	pop();
@@ -44,15 +46,20 @@ function drawStartButtons() {
 	playAloneButton.isInside(mouseX, mouseY);
 	playComputerButton.show();
 	playComputerButton.isInside(mouseX, mouseY);
+	howToButton.show();
+	howToButton.isInside(mouseX, mouseY);
 }
 
 function checkButtonsStart(x, y) {
-	if (playAloneButton.isInside(x, y) && GAMESTATE === MAINMENU) {
-		GAMESTATE = PREGAME;
-	} else if (playComputerButton.isInside(x, y) && GAMESTATE === MAINMENU) {
-		GAMESTATE = PREGAMEAI;
+	if (playAloneButton.isInside(x, y) && GAMESTATE === STATES.MAINMENU) {
+		GAMESTATE = STATES.PREGAME;
+	} else if (playComputerButton.isInside(x, y) && GAMESTATE === STATES.MAINMENU) {
+		GAMESTATE = STATES.PREGAMEAI;
+	} else if (howToButton.isInside(x, y) && GAMESTATE === STATES.MAINMENU) {
+		GAMESTATE = STATES.HOWTO;
 	}
 }
+
 
 
 

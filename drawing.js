@@ -13,10 +13,12 @@ function initVariables() {
 function draw() {
 
 	background(50);
-	if (GAMESTATE === MAINMENU) {
+	if (GAMESTATE === STATES.MAINMENU) {
 		drawStartScreen();
-	} else if (GAMESTATE === PREGAME || GAMESTATE === PREGAMEAI) {
+	} else if (GAMESTATE === STATES.PREGAME || GAMESTATE === STATES.PREGAMEAI) {
 		drawPreGame();
+	} else if (GAMESTATE === STATES.HOWTO) {
+		drawHowTo();
 	} else {
 		if (!simulate) {
 			drawBoard();
@@ -47,7 +49,7 @@ function draw() {
 
 			}
 			if (gameOver) {
-				reset(mainBoard, playerOne.color, playerTwo.color, PLAYINGGAME, aiPlaying);
+				reset(mainBoard, playerOne.color, playerTwo.color, STATES.PLAYINGGAME, aiPlaying);
 			} else {
 				getCurrentPlayer().move();
 			}

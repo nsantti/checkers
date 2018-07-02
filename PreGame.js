@@ -35,16 +35,16 @@ function drawPreGameButtons() {
 
 function checkButtonsPreGame(x, y) {
 	if (startButton.isInside(x, y)) {
-		if (GAMESTATE === PREGAMEAI) {
+		if (GAMESTATE === STATES.PREGAMEAI) {
 			aiPlaying = true;
-			reset(mainBoard, color(colorsSelected.p1col), color(colorsSelected.p2col), PLAYINGGAME, true);
+			reset(mainBoard, color(colorsSelected.p1col), color(colorsSelected.p2col), STATES.PLAYINGGAME, true);
 		} else {
 			aiPlaying = false;
-			reset(mainBoard, color(colorsSelected.p1col), color(colorsSelected.p2col), PLAYINGGAME, false);
+			reset(mainBoard, color(colorsSelected.p1col), color(colorsSelected.p2col), STATES.PLAYINGGAME, false);
 		}
 
 	} else if (preGameMainMenu.isInside(x, y)) {
-		reset(mainBoard, playerOne.color, playerTwo.color, MAINMENU, aiPlaying);
+		reset(mainBoard, playerOne.color, playerTwo.color, STATES.MAINMENU, aiPlaying);
 
 	} else {
 		checkButtonPallet(x, y);
@@ -116,7 +116,7 @@ function drawPlayerTwoSide() {
 	fill(255);
 	textAlign(LEFT);
 	textSize(30);
-	if (GAMESTATE === PREGAMEAI) {
+	if (GAMESTATE === STATES.PREGAMEAI) {
 		text("Computer", width - 80 - textWidth("Computer"), 150);
 	} else {
 		text("Player Two", width - 80 - textWidth("Player Two"), 150);
