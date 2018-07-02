@@ -64,12 +64,17 @@ class AI extends Player {
 		}
 
 		if (safe) {
-			if (!from.king && from.row === 7) {
+			if (!from.king && from.row === (getCurrentPlayer() === playerTwo ? 7 : 0)) {
 				score += this.weights[3];
 			} else if (!from.king) {
 				score += this.weights[4];
 				if (random() < 0.4) {
-					score += (map(to.row, 0, 7, 0.5, 0));
+					if (getCurrentPlayer() === playerTwo) {
+						score += (map(to.row, 0, 7, 0.5, 0));
+
+					} else {
+						score += map(to.row, 0, 7, 0, 0.5);
+					}
 				}
 			} else if (to.col < 2 || to.col > 5) {
 				score += this.weights[5];

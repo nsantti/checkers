@@ -18,10 +18,7 @@ let mustJump; // If a player jumps and can jump again, they must do it
 let canKeepJumping; // Tells us if the player can keep jumping with the piece they jumped with
 let gameOver; // Tells us if the game is over
 let GAMESTATE; // Tells us where in the game we are
-let MAINMENU; // Possible game state
-let PREGAME; // Possible game state
-let PLAYINGGAME; // Possible game state
-let PREGAMEAI;
+let STATES; // Possible gamestates
 let liveButtons; // Data structure to keep track of buttons during the game
 let randomMoveButton; // Button to make a random move
 let watchComputerPlay; // Flags the code to make the computer play against itself
@@ -62,10 +59,14 @@ function reset(callback, p1color = color(145), p2color = color(244, 185, 66), st
 	canKeepJumping = false;
 	gameOver = false;
 	GAMESTATE = state;
-	MAINMENU = 0;
-	PREGAME = 1;
-	PLAYINGGAME = 2;
-	PREGAMEAI = 3;
+	STATES = {
+		MAINMENU: 0,
+		PREGAME: 1,
+		PLAYINGGAME: 2,
+		PREGAMEAI: 3,
+		HOWTO: 4
+	};
+
 	watchComputerPlay = false;
 	aiPlaying = ai;
 	JUMPEDPIECES = [];
@@ -111,6 +112,7 @@ function reset(callback, p1color = color(145), p2color = color(244, 185, 66), st
 	initVariables();
 	initStartScreen();
 	initPreGame();
+	initHowTo();
 	if (callback instanceof Function) {
 		callback();
 	} else {
@@ -161,11 +163,13 @@ function setup() {
 
 function mousePressed() {
 	// End Game Menu
-	if (GAMESTATE === MAINMENU) {
+	if (GAMESTATE === STATES.MAINMENU) {
 		checkButtonsStart(mouseX, mouseY);
-	} else if (GAMESTATE === PREGAME || GAMESTATE === PREGAMEAI) {
+	} else if (GAMESTATE === STATES.PREGAME || GAMESTATE === STATES.PREGAMEAI) {
 		checkButtonsPreGame(mouseX, mouseY);
-	} else if (GAMESTATE === PLAYINGGAME) {
+	} else if (GAMESTATE === STATES.HOWTO) {
+		checkButtonsHowTo(mouseX, mouseY);
+	} else if (GAMESTATE === STATES.PLAYINGGAME) {
 		hideCurrentMoves();
 		checkButtons(mouseX, mouseY);
 		// Check if we are inside the gameboard
@@ -190,17 +194,17 @@ function mousePressed() {
 
 // Checks each of the live game buttons to see if the user clicked them
 function checkButtons(x, y) {
-	if (gameOver && GAMESTATE === PLAYINGGAME) {
+	if (gameOver && GAMESTATE === STATES.PLAYINGGAME) {
 		if (playAgain.isInside(x, y)) {
-			reset(mainBoard, playerOne.color, playerTwo.color, PLAYINGGAME, aiPlaying);
+			reset(mainBoard, playerOne.color, playerTwo.color, STATES.PLAYINGGAME, aiPlaying);
 		}
 		if (mainMenu.isInside(x, y)) {
-			reset(mainBoard, playerOne.color, playerTwo.color, MAINMENU, aiPlaying);
+			reset(mainBoard, playerOne.color, playerTwo.color, STATES.MAINMENU, aiPlaying);
 		}
 		return;
 	}
 	// Checking if we clicked any of the buttons
-	if (!gameOver && GAMESTATE === PLAYINGGAME) {
+	if (!gameOver && GAMESTATE === STATES.PLAYINGGAME) {
 		if (getCurrentPlayer() === playerOne && randomMoveButton.isInside(x, y)) {
 			makeRandomMove();
 		}
@@ -217,13 +221,13 @@ function checkButtons(x, y) {
 			toggleNumbers();
 		}
 		if (resetButton.isInside(x, y)) {
-			reset(mainBoard, playerOne.color, playerTwo.color, PLAYINGGAME, aiPlaying);
+			reset(mainBoard, playerOne.color, playerTwo.color, STATES.PLAYINGGAME, aiPlaying);
 		}
 		if (undoButton.isInside(x, y)) {
 			undo();
 		}
 		if (mainMenuButton.isInside(x, y)) {
-			reset(mainBoard, playerOne.color, playerTwo.color, MAINMENU, aiPlaying);
+			reset(mainBoard, playerOne.color, playerTwo.color, STATES.MAINMENU, aiPlaying);
 		}
 	}
 }
