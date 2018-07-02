@@ -11,31 +11,64 @@ function initVariables() {
 }
 
 function draw() {
+
 	background(50);
 	if (GAMESTATE === MAINMENU) {
 		drawStartScreen();
 	} else if (GAMESTATE === PREGAME || GAMESTATE === PREGAMEAI) {
 		drawPreGame();
 	} else {
-		drawBoard();
-		drawArrow();
-		drawArrowMoves();
+		if (!simulate) {
+			drawBoard();
+			drawArrow();
+			drawArrowMoves();
+			drawCapturedPieces();
+			drawButtons(liveButtons);
+		}
+
 		drawPlayerTurn();
-		drawCapturedPieces();
-		drawButtons(liveButtons);
+
 		if (frameCount % 1 === 0 && !gameOver && watchComputerPlay) {
 			makeRandomMove();
 		}
+		if (simulate) {
+			if (gameCount % 10 === 0 && moves.length < 2) {
+				console.log(results);
 
-		if (getCurrentPlayer() === playerTwo) {
-			counter++;
-			if (!gameOver && counter > 50 && typeof getCurrentPlayer().move !== 'undefined' && !watchComputerPlay) {
+			}
+			if (gameOver && gameCount > 0 && gameCount % populationSize === 0) {
+				populationIndex++;
+				if (populationIndex === population.length) {
+					noLoop();
+					console.log(population);
+					return;
+				}
+
+
+			}
+			if (gameOver) {
+				reset(mainBoard, playerOne.color, playerTwo.color, PLAYINGGAME, aiPlaying);
+			} else {
 				getCurrentPlayer().move();
-				counter = 0;
 			}
 		}
 
+
+		if (getCurrentPlayer() === playerTwo) {
+			counter++;
+			if (!gameOver && counter > (simulate ? 0 : 60) && typeof getCurrentPlayer().move !== 'undefined' && !watchComputerPlay) {
+				getCurrentPlayer().move();
+				counter = 0;
+			}
+		} else if (simulate && !gameOver && getCurrentPlayer() === playerOne) {
+			makeRandomMove();
+		}
+
+
+
 	}
+
+
 }
 
 
@@ -98,10 +131,16 @@ function drawEndingScreen() {
 	let message = "Game Over, ";
 	if (playerOne.won) {
 		message += playerOne.name + " Won!";
+		population[populationIndex].results.lost += 1;
+		results.lost++;
 	} else if (playerTwo.won) {
 		message += playerTwo.name + " Won!";
+		population[populationIndex].results.won += 1;
+		results.won++;
 	} else {
 		message += "TIE!";
+		population[populationIndex].results.tie += 1;
+		results.tie++;
 	}
 	noStroke();
 	fill(255);
@@ -114,9 +153,15 @@ function drawEndingScreen() {
 	text("Total Moves: " + moves.length, width / 2 - w * 2.5, h + 75 * 3);
 	text(playerOne.name + " pieces lost: " + playerTwo.capturedPieces.length, width / 2 - w * 2.5, h + 75 * 4);
 	text(playerTwo.name + " pieces lost: " + playerOne.capturedPieces.length, width / 2 - w * 2.5, h + 75 * 5);
-	drawButtons(endingButtons);
+	if (!simulate) {
+		drawButtons(endingButtons);
+
+	}
 	pop();
-	//reset(mainBoard, playerOne.color, playerTwo.color, PLAYINGGAME, aiPlaying);
+	if (simulate) {
+		gameCount++;
+
+	}
 
 }
 

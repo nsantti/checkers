@@ -123,6 +123,18 @@ function board12() {
 	playerPiece(5, 0, 2);
 }
 
+function board13() {
+	playerPiece(6, 7, 1, true);
+	playerPiece(4, 7, 2);
+	playerPiece(4, 5, 2, true);
+	playerPiece(3, 4, 2, true);
+	playerPiece(5, 0, 1);
+	playerPiece(5, 2, 1);
+	playerPiece(7, 0, 2);
+	playerPiece(7, 2, 2);
+
+}
+
 // Simple way to place pieces on the board
 function playerPiece(aRow, aCol, anOwnerN, aKing = false) {
 	let anOwner = (anOwnerN == 1) ? playerOne : playerTwo;

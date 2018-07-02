@@ -34,6 +34,12 @@ let mainMenuButton; // Button to return to the main menu
 let JUMPEDPIECES; // Holds all jumped pieces
 let playerMoves; // What player goes for what turn
 let aiPlaying; // Is an ai playing?
+let simulate; // Are we simulating the games?
+let results; // Results from simulating
+let gameCount; // How many games have we simulated?
+let population; // Population of AI's for genetic evolution
+let populationSize;
+let populationIndex;
 
 
 
@@ -67,6 +73,7 @@ function reset(callback, p1color = color(145), p2color = color(244, 185, 66), st
 	liveButtons = [];
 	computerPlayButton = undefined;
 
+
 	liveButtons.push(toggleNumberButton = new NButton("Numbers", 5, height, 70, 50, false));
 	liveButtons.push(resetButton = new NButton("Reset", width - 75, 10, 70, 50, false));
 	liveButtons.push(undoButton = new NButton("Undo", width - 75, 70, 70, 50, false));
@@ -80,12 +87,15 @@ function reset(callback, p1color = color(145), p2color = color(244, 185, 66), st
 	liveButtons.push(showMovesButton = new NButton("Show Current Player moves", width / 2 - 100, 10, 200, 50, false));
 
 	playerOne = new Player(p1color, "Player One");
+	//playerTwo = new Player(p2color, "Player Two");
 	if (aiPlaying) {
-		playerTwo = new AI(p2color);
+		//playerOne = new goodAI(p1color, "Good AI");
+		playerTwo = new AI(p2color, "Computer", population[populationIndex].weights);
 	} else {
 		liveButtons.push(computerPlayButton = new NButton("Toggle computer play", width / 2 + 160, 10, 160, 50, false));
 
 		playerTwo = new Player(p2color, "Player Two");
+
 	}
 	currentPlayer = playerOne;
 	playerMoves.push(playerOne);
@@ -118,10 +128,35 @@ function reset(callback, p1color = color(145), p2color = color(244, 185, 66), st
 	generateMoves();
 }
 
+function createPopulation() {
+	population = [];
+	for (let i = 0; i < 10; i++) {
+		population.push({
+			weights: [5, -4, -2, 0.5, 1, 0.5, 4],
+			results: {
+				won: 0,
+				lost: 0,
+				tie: 0
+			}
+		});
+	}
+}
+
 function setup() {
 	createCanvas(800, 800);
+	createPopulation();
+	populationIndex = 0;
+	frameRate(100);
+	populationSize = 100;
 	reset(mainBoard, color(0), color(0), 0, false);
-	//reset(mainBoard, color(145), color(244, 185, 66), 2);
+	//reset(mainBoard, color(145), color(244, 185, 66), 2, true);
+	simulate = false;
+	results = {
+		won: 0,
+		lost: 0,
+		tie: 0
+	};
+	gameCount = 0;
 }
 
 function mousePressed() {
@@ -430,6 +465,7 @@ function checkForKings() {
 		}
 	}
 }
+
 
 // Make the piece a king
 function makeKing(aSquare) {
