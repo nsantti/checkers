@@ -48,19 +48,22 @@ function draw() {
 			}
 			if (gameOver) {
 				reset(mainBoard, playerOne.color, playerTwo.color, PLAYINGGAME, aiPlaying);
+			} else {
+				getCurrentPlayer().move();
 			}
 		}
 
 
-		if (getCurrentPlayer() === playerOne) {
+		if (getCurrentPlayer() === playerTwo) {
 			counter++;
 			if (!gameOver && counter > (simulate ? 0 : 60) && typeof getCurrentPlayer().move !== 'undefined' && !watchComputerPlay) {
 				getCurrentPlayer().move();
 				counter = 0;
 			}
-		} else if (simulate && !gameOver && getCurrentPlayer() === playerTwo) {
+		} else if (simulate && !gameOver && getCurrentPlayer() === playerOne) {
 			makeRandomMove();
 		}
+
 
 
 	}

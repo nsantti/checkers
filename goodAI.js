@@ -1,44 +1,11 @@
-class goodAI extends Player {
+class goodAI extends AI {
 	constructor(color, name, weights) {
 		super(color, name);
 		//[5, -4, -2, 0.5, 1, 0.5] default weights
-		this.weights = [5, -4, -2, 0.5, 1, 0.5, 4];
-		this.results = {
-			won: 0,
-			lost: 0,
-			tie: 0
-		};
+
 	}
 
-	move() {
-		console.log("NEW MOVE");
 
-		// Get list of all possible moves
-		let possibleMoves = this.getAllMoves();
-		let otherPlayerMoves = getOtherPlayer().squaresOwned(board);
-
-		// Apply a score to each move
-		for (let eachMove of possibleMoves) {
-			eachMove.score = this.scoreMove(eachMove.from, eachMove.to, otherPlayerMoves);
-		}
-		// If we can cover up a potential jump, do it.
-		otherPlayerMoves = otherPlayerMoves.filter(square => square.jumps.length > 0);
-		for (let i = 0; i < otherPlayerMoves.length; i++) {
-			for (let j = 0; j < otherPlayerMoves[i].jumps.length; j++) {
-				for (let k = 0; k < possibleMoves.length; k++) {
-					if (possibleMoves[k].to === otherPlayerMoves[i].jumps[j]) {
-						possibleMoves[k].score += this.weights[6];
-					}
-				}
-			}
-		}
-
-		//console.log("Player Two: ", possibleMoves);
-
-		// Make the move with the highest score
-		let theMove = this.getBestMove(possibleMoves);
-		makeMove(theMove.from, theMove.to);
-	}
 
 	scoreMove(from, to, arr) {
 		let score = 0;
@@ -66,7 +33,7 @@ class goodAI extends Player {
 		}
 
 		if (safe) {
-			if (!from.king && from.row === 7) {
+			if (!from.king && from.row === 0) {
 				score += this.weights[3];
 			} else if (!from.king) {
 				score += this.weights[4];
@@ -86,17 +53,14 @@ class goodAI extends Player {
 			let BOTTOMRIGHT = board[to.row + 1][to.col + 1];
 			if (BOTTOMRIGHT.ownerN === 2) {
 				if (TOPLEFT.ownerN === 0) {
-					console.log(87, from, to);
 					return true;
 				}
 				if (TOPLEFT === from) {
-					console.log(91, from, to);
 					return true;
 				}
 			}
 			if (TOPLEFT.ownerN === 2 && TOPLEFT.king) {
-				if (BOTTOMRIGHT.ownerN === 0) {
-					console.log(97, from, to);
+				if (BOTTOMRIGHT === from || BOTTOMRIGHT.ownerN === 0) {
 					return true;
 				}
 			}
@@ -107,22 +71,18 @@ class goodAI extends Player {
 			let BOTTOMLEFT = board[to.row + 1][to.col - 1];
 			if (BOTTOMLEFT.ownerN === 2) {
 				if (TOPRIGHT.ownerN === 0) {
-					console.log(108, from, to);
 					return true;
 				}
 				if (TOPRIGHT === from) {
-					console.log(112, from, to);
 					return true;
 				}
 			}
 			if (TOPRIGHT.ownerN === 2 && TOPRIGHT.king) {
-				if (BOTTOMLEFT.ownerN === 0) {
-					console.log(118, from, to);
+				if (BOTTOMLEFT === from || BOTTOMLEFT.ownerN === 0) {
 					return true;
 				}
 			}
 		}
-		console.log(123);
 		return false;
 	}
 
@@ -184,24 +144,7 @@ class goodAI extends Player {
 		return false;
 	}
 
-	getBestMove(arr) {
-		let highest = -100000;
-		for (let i = 0; i < arr.length; i++) {
-			if (arr[i].score > highest) {
-				highest = arr[i].score;
-			}
-		}
 
-		let potentialMoves = [];
-		for (let i = 0; i < arr.length; i++) {
-			if (arr[i].score === highest) {
-				potentialMoves.push(arr[i]);
-			}
-		}
-
-
-		return random(potentialMoves);
-	}
 
 
 }

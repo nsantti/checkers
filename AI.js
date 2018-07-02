@@ -8,6 +8,7 @@ class AI extends Player {
 			lost: 0,
 			tie: 0
 		};
+		this.pMoves = [];
 	}
 
 	move() {
@@ -30,6 +31,7 @@ class AI extends Player {
 				}
 			}
 		}
+		this.pMoves = possibleMoves;
 
 		//console.log("Player Two: ", possibleMoves);
 
@@ -42,9 +44,6 @@ class AI extends Player {
 		let score = 0;
 		let immediateNeighbors = from.fourNeighbors();
 		let safe = true;
-
-
-
 
 		// Is the piece in danger of being jumped?
 		if (this.canAlreadyBeJumped(from)) {
@@ -69,6 +68,9 @@ class AI extends Player {
 				score += this.weights[3];
 			} else if (!from.king) {
 				score += this.weights[4];
+				if (random() < 0.4) {
+					score += (map(to.row, 0, 7, 0.5, 0));
+				}
 			} else if (to.col < 2 || to.col > 5) {
 				score += this.weights[5];
 			}
@@ -98,7 +100,7 @@ class AI extends Player {
 				}
 			}
 			if (BOTTOMRIGHT.ownerN === 1 && BOTTOMRIGHT.king) {
-				if (TOPLEFT.ownerN === 0) {
+				if (TOPLEFT === from || TOPLEFT.ownerN === 0) {
 					return true;
 				}
 			}
@@ -116,7 +118,7 @@ class AI extends Player {
 				}
 			}
 			if (BOTTOMLEFT.ownerN === 1 && BOTTOMLEFT.king) {
-				if (TOPRIGHT.ownerN === 0) {
+				if (TOPRIGHT === from || TOPRIGHT.ownerN === 0) {
 					return true;
 				}
 			}

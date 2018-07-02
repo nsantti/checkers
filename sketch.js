@@ -86,11 +86,11 @@ function reset(callback, p1color = color(145), p2color = color(244, 185, 66), st
 	// Creating the button to show all legal moves for current player
 	liveButtons.push(showMovesButton = new NButton("Show Current Player moves", width / 2 - 100, 10, 200, 50, false));
 
-	//playerOne = new Player(p1color, "Player One");
-	playerTwo = new Player(p2color, "Player Two");
+	playerOne = new Player(p1color, "Player One");
+	//playerTwo = new Player(p2color, "Player Two");
 	if (aiPlaying) {
-		playerOne = new goodAI(p1color, "Player One");
-		//playerTwo = new AI(p2color, "Computer", population[populationIndex].weights);
+		//playerOne = new goodAI(p1color, "Good AI");
+		playerTwo = new AI(p2color, "Computer", population[populationIndex].weights);
 	} else {
 		liveButtons.push(computerPlayButton = new NButton("Toggle computer play", width / 2 + 160, 10, 160, 50, false));
 
@@ -132,7 +132,7 @@ function createPopulation() {
 	population = [];
 	for (let i = 0; i < 10; i++) {
 		population.push({
-			weights: [random(-10, 10), random(-10, 10), random(-10, 10), random(-10, 10), random(-10, 10), random(-10, 10), random(-10, 10)],
+			weights: [5, -4, -2, 0.5, 1, 0.5, 4],
 			results: {
 				won: 0,
 				lost: 0,
@@ -148,8 +148,8 @@ function setup() {
 	populationIndex = 0;
 	frameRate(100);
 	populationSize = 100;
-	//	reset(mainBoard, color(0), color(0), 0, false);
-	reset(mainBoard, color(145), color(244, 185, 66), 2, true);
+	reset(mainBoard, color(0), color(0), 0, false);
+	//reset(mainBoard, color(145), color(244, 185, 66), 2, true);
 	simulate = false;
 	results = {
 		won: 0,
