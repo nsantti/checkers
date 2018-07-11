@@ -71,7 +71,6 @@ class AI extends Player {
 				if (random() < 0.4) {
 					if (getCurrentPlayer() === playerTwo) {
 						score += (map(to.row, 0, 7, 0.5, 0));
-
 					} else {
 						score += map(to.row, 0, 7, 0, 0.5);
 					}
@@ -83,20 +82,20 @@ class AI extends Player {
 		return score;
 	}
 
-	getSafeSpot(from, to) {
-		// If top left to bottom right
-		if (this.canAccess()) {
-
-		}
-	}
 
 	canBeJumped(from, to) {
+		let otherOwnerN = getCurrentPlayer() === playerTwo ? 1 : 2;
 		// look top squares to see if a jump exists
 		// Top left and bottom right
 		if (this.canAccess(to.row - 1, to.col - 1) && this.canAccess(to.row + 1, to.col + 1)) {
 			let TOPLEFT = board[to.row - 1][to.col - 1];
 			let BOTTOMRIGHT = board[to.row + 1][to.col + 1];
-			if (TOPLEFT.ownerN === 1) {
+			if (getCurrentPlayer() === playerOne) {
+				let temp = TOPLEFT;
+				TOPLEFT = BOTTOMRIGHT;
+				BOTTOMRIGHT = temp;
+			}
+			if (TOPLEFT.ownerN === otherOwnerN) {
 				if (BOTTOMRIGHT.ownerN === 0) {
 					return true;
 				}
@@ -104,7 +103,7 @@ class AI extends Player {
 					return true;
 				}
 			}
-			if (BOTTOMRIGHT.ownerN === 1 && BOTTOMRIGHT.king) {
+			if (BOTTOMRIGHT.ownerN === otherOwnerN && BOTTOMRIGHT.king) {
 				if (TOPLEFT === from || TOPLEFT.ownerN === 0) {
 					return true;
 				}
@@ -114,7 +113,12 @@ class AI extends Player {
 		if (this.canAccess(to.row - 1, to.col + 1) && this.canAccess(to.row + 1, to.col - 1)) {
 			let TOPRIGHT = board[to.row - 1][to.col + 1];
 			let BOTTOMLEFT = board[to.row + 1][to.col - 1];
-			if (TOPRIGHT.ownerN === 1) {
+			if (getCurrentPlayer() === playerOne) {
+				let temp = TOPRIGHT;
+				TOPRIGHT = BOTTOMLEFT;
+				BOTTOMLEFT = temp;
+			}
+			if (TOPRIGHT.ownerN === otherOwnerN) {
 				if (BOTTOMLEFT.ownerN === 0) {
 					return true;
 				}
@@ -122,7 +126,7 @@ class AI extends Player {
 					return true;
 				}
 			}
-			if (BOTTOMLEFT.ownerN === 1 && BOTTOMLEFT.king) {
+			if (BOTTOMLEFT.ownerN === otherOwnerN && BOTTOMLEFT.king) {
 				if (TOPRIGHT === from || TOPRIGHT.ownerN === 0) {
 					return true;
 				}
@@ -135,32 +139,42 @@ class AI extends Player {
 		let row = square.loc.row;
 		let col = square.loc.col;
 		let target = square.pos;
+		let otherOwnerN = getCurrentPlayer() === playerTwo ? 1 : 2;
+
 		// Top left
 		if (target === "TOPLEFT") {
 			if (this.canAccess(row - 1, col - 1)) {
-				if (board[row - 1][col - 1].ownerN === 1) {
-					return true;
+				if (board[row - 1][col - 1].ownerN === otherOwnerN) {
+					if (getCurrentPlayer() === playerTwo || board[row - 1][col - 1].king) {
+						return true;
+					}
 				}
 			}
 		}
 		if (target === "TOPRIGHT") {
 			if (this.canAccess(row - 1, col + 1)) {
-				if (board[row - 1][col + 1].ownerN === 1) {
-					return true;
+				if (board[row - 1][col + 1].ownerN === otherOwnerN) {
+					if (getCurrentPlayer() === playerTwo || board[row - 1][col + 1].king) {
+						return true;
+					}
 				}
 			}
 		}
 		if (target === "BOTTOMLEFT") {
 			if (this.canAccess(row + 1, col - 1)) {
-				if (board[row + 1][col - 1].ownerN === 1 && board[row + 1][col - 1].king) {
-					return true;
+				if (board[row + 1][col - 1].ownerN === otherOwnerN) {
+					if (getCurrentPlayer() === playerOne || board[row + 1][col - 1].king) {
+						return true;
+					}
 				}
 			}
 		}
 		if (target === "BOTTOMRIGHT") {
 			if (this.canAccess(row + 1, col + 1)) {
-				if (board[row + 1][col + 1].ownerN === 1 && board[row + 1][col + 1].king) {
-					return true;
+				if (board[row + 1][col + 1].ownerN === otherOwnerN) {
+					if (getCurrentPlayer() === playerOne || board[row + 1][col + 1].king) {
+						return true;
+					}
 				}
 			}
 		}
@@ -172,19 +186,37 @@ class AI extends Player {
 		let col = from.col;
 		// Top left to bottom right jump or bottom right to top left
 		if (this.canAccess(row - 1, col - 1) && this.canAccess(row + 1, col + 1)) {
-			if (board[row - 1][col - 1].ownerN === 1 && board[row + 1][col + 1].ownerN === 0) {
-				return true;
-			} else if (board[row + 1][col + 1].ownerN === 1 && board[row + 1][col + 1].king && board[row - 1][col - 1].ownerN === 0) {
-				return true;
+			if (getCurrentPlayer() === playerTwo) {
+				if (board[row - 1][col - 1].ownerN === 1 && board[row + 1][col + 1].ownerN === 0) {
+					return true;
+				} else if (board[row + 1][col + 1].ownerN === 1 && board[row + 1][col + 1].king && board[row - 1][col - 1].ownerN === 0) {
+					return true;
+				}
+			} else if (getCurrentPlayer() == playerOne) {
+				if (board[row - 1][col - 1].ownerN === 2 && board[row - 1][col - 1].king && board[row + 1][col + 1].ownerN === 0) {
+					return true;
+				} else if (board[row + 1][col + 1].ownerN === 2 && board[row - 1][col - 1].ownerN === 0) {
+					return true;
+				}
 			}
+
 		}
 
 		if (this.canAccess(row - 1, col + 1) && this.canAccess(row + 1, col - 1)) {
-			if (board[row - 1][col + 1].ownerN === 1 && board[row + 1][col - 1].ownerN === 0) {
-				return true;
-			} else if (board[row + 1][col - 1].ownerN === 1 && board[row + 1][col - 1].king && board[row - 1][col + 1].ownerN === 0) {
-				return true;
+			if (getCurrentPlayer() === playerTwo) {
+				if (board[row - 1][col + 1].ownerN === 1 && board[row + 1][col - 1].ownerN === 0) {
+					return true;
+				} else if (board[row + 1][col - 1].ownerN === 1 && board[row + 1][col - 1].king && board[row - 1][col + 1].ownerN === 0) {
+					return true;
+				}
+			} else if (getCurrentPlayer() === playerOne) {
+				if (board[row - 1][col + 1].ownerN === 2 && board[row - 1][col + 1].king && board[row + 1][col - 1].ownerN === 0) {
+					return true;
+				} else if (board[row + 1][col - 1].ownerN === 2 && board[row - 1][col + 1].ownerN === 0) {
+					return true;
+				}
 			}
+
 		}
 		return false;
 	}
@@ -203,8 +235,6 @@ class AI extends Player {
 				potentialMoves.push(arr[i]);
 			}
 		}
-
-
 		return random(potentialMoves);
 	}
 

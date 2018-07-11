@@ -11,13 +11,21 @@ class ButtonPallet {
 	show() {
 		push();
 		fill(this.col);
+
 		if (this.inside || this.selected) {
 			stroke(0);
 			strokeWeight(3);
+			ellipse(this.x, this.y, this.size);
+			translate(this.x, this.y);
+			for (let i = 0; i < 4; i++) {
+				line(0, 0, this.size / 3, this.size / 3);
+				rotate(PI / 2);
+			}
 		} else {
 			noStroke();
+			ellipse(this.x, this.y, this.size);
 		}
-		ellipse(this.x, this.y, this.size);
+
 		pop();
 	}
 

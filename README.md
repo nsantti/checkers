@@ -1,5 +1,5 @@
 # Checkers
-This is classic checkers with an interactive UI. ***NOTE*** Must use p5js library: <a href="https://p5js.org/download/" target="_blank">p5js</a>
+This is classic checkers with an interactive UI. ***NOTE*** Uses the p5js library: <a href="https://p5js.org/download/" target="_blank">p5js</a>
 
 ### Features:
 - Move generator for each player
@@ -8,12 +8,12 @@ This is classic checkers with an interactive UI. ***NOTE*** Must use p5js librar
     - If player jumps and then becomes a king, they must continue jumping if possible
     - If player jumps, only the piece that jumps has moves generated
   - Button to highlight all legal moves for each player
-  - Moves are generated after player turn ends
+  - Moves are generated after each player turn ends
 - Clickable buttons
   - Player can click a button to make a random move
   - Button available to watch a computer play against itself
   - Game Over screen has a button to play again
-    - Player colors are remembered for the next game
+    - Player colors and names are remembered for the next game
   - Button to see all available legal moves for current player
   - Undo button to undo the previous move
     - Can undo as many moves as wanted
@@ -35,18 +35,28 @@ This is classic checkers with an interactive UI. ***NOTE*** Must use p5js librar
     - Shows game stats such as how many moves total and number of pieces lost
   - Main menu screen
     - Players select the color they want to play as
+    - Players can enter their name
 - AI
   - The AI generates a score for each possible move, then executes the best move possible
   - Always takes one second to make its move
-  - Wins 95% of games against a random moves player (Ties 4% of the time, Loses 1%)
+  - Wins 99% of games against a random moves player (Ties 1% of the time, Loses < 1%)
 
 
 ### TODO:
 - Animate the pieces once a move is declared
-- Let the players enter their name to play
 - Let the player select difficulty for AI (easy is random, hard is smart AI)
 
 ### Updates made
+- 7/11/18
+  - Made AI capable of playing as either player
+  - Updated color options
+    - Added a black background to button panel to see contrast
+    - Selected colors now have an 'X' through them
+  - Players can now enter their name to play
+  - Added 'How to Play' menu with basic checkers rules
+
+
+&nbsp;
 - 6/27/18
   - Added an AI for the player to play against
     - The AI generates a score for each possible move, then executes the best move possible
@@ -54,7 +64,7 @@ This is classic checkers with an interactive UI. ***NOTE*** Must use p5js librar
     - Wins 95% of games against a random moves player (Ties 4% of the time, Loses 1%)
   - Main menu button added to pregame screen
   - Diabled 'Watch Computer Play' button when playing aginst an AI
-  
+
 
 &nbsp;
 - 6/25/18

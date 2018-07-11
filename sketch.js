@@ -41,7 +41,7 @@ let populationIndex;
 
 
 // This function initializes all of the variables
-function reset(callback, p1color = color(145), p2color = color(244, 185, 66), state = 2, ai = false) {
+function reset(callback, p1color = color(145), p2color = color(244, 185, 66), p1name = "Player One", p2name = "Player Two", state = 2, ai = false) {
 	rows = 8;
 	cols = 8;
 	board = new Array(cols);
@@ -87,15 +87,16 @@ function reset(callback, p1color = color(145), p2color = color(244, 185, 66), st
 	// Creating the button to show all legal moves for current player
 	liveButtons.push(showMovesButton = new NButton("Show Current Player moves", width / 2 - 100, 10, 200, 50, false));
 
-	playerOne = new Player(p1color, "Player One");
-	//playerTwo = new Player(p2color, "Player Two");
+	playerOne = new Player(p1color, p1name);
+	//playerTwo = new Player(p2color, p2name);
 	if (aiPlaying) {
-		//playerOne = new goodAI(p1color, "Good AI");
+		//playerOne = new AI(p1color, "Computer", population[populationIndex].weights);
 		playerTwo = new AI(p2color, "Computer", population[populationIndex].weights);
 	} else {
 		liveButtons.push(computerPlayButton = new NButton("Toggle computer play", width / 2 + 160, 10, 160, 50, false));
 
-		playerTwo = new Player(p2color, "Player Two");
+		playerTwo = new Player(p2color, p2name);
+		//playerOne = new Player(p1color, p1name);
 
 	}
 	currentPlayer = playerOne;
@@ -150,8 +151,8 @@ function setup() {
 	populationIndex = 0;
 	frameRate(100);
 	populationSize = 100;
-	reset(mainBoard, color(0), color(0), 0, false);
-	//reset(mainBoard, color(145), color(244, 185, 66), 2, true);
+	reset(mainBoard, color(0), color(0), "Player One", "Player Two", 0, false);
+	//reset(mainBoard, color(145), color(244, 185, 66), "Player One", "Player Two",2, true);
 	simulate = false;
 	results = {
 		won: 0,
@@ -196,17 +197,22 @@ function mousePressed() {
 function checkButtons(x, y) {
 	if (gameOver && GAMESTATE === STATES.PLAYINGGAME) {
 		if (playAgain.isInside(x, y)) {
-			reset(mainBoard, playerOne.color, playerTwo.color, STATES.PLAYINGGAME, aiPlaying);
+			reset(mainBoard, playerOne.color, playerTwo.color, playerOne.name, playerTwo.name, STATES.PLAYINGGAME, aiPlaying);
 		}
 		if (mainMenu.isInside(x, y)) {
-			reset(mainBoard, playerOne.color, playerTwo.color, STATES.MAINMENU, aiPlaying);
+			reset(mainBoard, playerOne.color, playerTwo.color, playerOne.name, playerTwo.name, STATES.MAINMENU, aiPlaying);
 		}
 		return;
 	}
 	// Checking if we clicked any of the buttons
 	if (!gameOver && GAMESTATE === STATES.PLAYINGGAME) {
-		if (getCurrentPlayer() === playerOne && randomMoveButton.isInside(x, y)) {
-			makeRandomMove();
+
+		if (randomMoveButton.isInside(x, y)) {
+			if (aiPlaying && getCurrentPlayer() === playerOne) {
+				makeRandomMove()
+			} else if (!aiPlaying) {
+				makeRandomMove();
+			}
 		}
 		if (!aiPlaying && computerPlayButton.isInside(x, y)) {
 			watchComputerPlay = !watchComputerPlay;
@@ -221,13 +227,13 @@ function checkButtons(x, y) {
 			toggleNumbers();
 		}
 		if (resetButton.isInside(x, y)) {
-			reset(mainBoard, playerOne.color, playerTwo.color, STATES.PLAYINGGAME, aiPlaying);
+			reset(mainBoard, playerOne.color, playerTwo.color, playerOne.name, playerTwo.name, STATES.PLAYINGGAME, aiPlaying);
 		}
 		if (undoButton.isInside(x, y)) {
 			undo();
 		}
 		if (mainMenuButton.isInside(x, y)) {
-			reset(mainBoard, playerOne.color, playerTwo.color, STATES.MAINMENU, aiPlaying);
+			reset(mainBoard, playerOne.color, playerTwo.color, playerOne.name, playerTwo.name, STATES.MAINMENU, aiPlaying);
 		}
 	}
 }
@@ -258,7 +264,9 @@ function mouseReleased() {
 
 function keyPressed() {
 	if (key == 'M') {
-		if (!gameOver) {
+		if (!gameOver && !aiPlaying) {
+			makeRandomMove();
+		} else if (aiPlaying && getCurrentPlayer() === playerOne) {
 			makeRandomMove();
 		}
 	}

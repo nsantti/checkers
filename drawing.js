@@ -36,7 +36,6 @@ function draw() {
 		if (simulate) {
 			if (gameCount % 10 === 0 && moves.length < 2) {
 				console.log(results);
-
 			}
 			if (gameOver && gameCount > 0 && gameCount % populationSize === 0) {
 				populationIndex++;
@@ -45,16 +44,13 @@ function draw() {
 					console.log(population);
 					return;
 				}
-
-
 			}
 			if (gameOver) {
-				reset(mainBoard, playerOne.color, playerTwo.color, STATES.PLAYINGGAME, aiPlaying);
+				reset(mainBoard, playerOne.color, playerTwo.color, playerOne.name, playerTwo.name, STATES.PLAYINGGAME, aiPlaying);
 			} else {
 				getCurrentPlayer().move();
 			}
 		}
-
 
 		if (getCurrentPlayer() === playerTwo) {
 			counter++;
@@ -65,12 +61,7 @@ function draw() {
 		} else if (simulate && !gameOver && getCurrentPlayer() === playerOne) {
 			makeRandomMove();
 		}
-
-
-
 	}
-
-
 }
 
 
