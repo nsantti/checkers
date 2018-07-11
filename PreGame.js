@@ -3,6 +3,8 @@ let buttonPalletLeft; // Color options for player one
 let buttonPalletRight; // Color options for player two
 let colorsSelected; // What colors did we select?
 let preGameMainMenu; // Main Menu button for pregame screen.
+let p1input; // Input field for player to enter their name
+let p2input; // Input field for player to enter their name
 
 function initPreGame() {
 	startButton = new NButton("Start", width / 2 - 75, height - 100, 150, 75, false, 25);
@@ -11,11 +13,23 @@ function initPreGame() {
 	buttonPalletRight = [];
 	createButtonPallet(50, 250, buttonPalletLeft);
 	createButtonPallet(width - 50 - 4 * 50 - 3 * 4, 250, buttonPalletRight);
+	p1input = createInput('Player One');
+	p1input.position(55, 220);
+	p1input.hide();
+	p1input.size(150, 40);
+	p1input.style('font-size', '20px');
+	p2input = createInput('Player Two');
+	p2input.position(width - 250, 220);
+	p2input.hide();
+	p2input.size(150, 40);
+	p2input.style('font-size', '20px');
 	buttonPalletLeft[9].selected = true;
 	buttonPalletRight[10].selected = true;
 	colorsSelected = {
 		p1col: buttonPalletLeft[9].col,
 		p2col: buttonPalletRight[10].col,
+		p1name: "Player One",
+		p2name: "Player Two"
 	};
 }
 
@@ -31,20 +45,34 @@ function drawPreGameButtons() {
 	startButton.isInside(mouseX, mouseY);
 	preGameMainMenu.show();
 	preGameMainMenu.isInside(mouseX, mouseY);
+	p1input.show();
+	if (GAMESTATE === STATES.PREGAME) {
+		p2input.show();
+	}
 }
 
 function checkButtonsPreGame(x, y) {
 	if (startButton.isInside(x, y)) {
+		if (p1input.value().length > 0) {
+			colorsSelected.p1name = p1input.value();
+		}
+		if (p2input.value().length > 0 && p2input.value() !== p1input.value()) {
+			colorsSelected.p2name = p2input.value();
+		}
+		p1input.hide();
+		p2input.hide();
 		if (GAMESTATE === STATES.PREGAMEAI) {
 			aiPlaying = true;
-			reset(mainBoard, color(colorsSelected.p1col), color(colorsSelected.p2col), STATES.PLAYINGGAME, true);
+			reset(mainBoard, color(colorsSelected.p1col), color(colorsSelected.p2col), colorsSelected.p1name, colorsSelected.p2name, STATES.PLAYINGGAME, true);
 		} else {
 			aiPlaying = false;
-			reset(mainBoard, color(colorsSelected.p1col), color(colorsSelected.p2col), STATES.PLAYINGGAME, false);
+			reset(mainBoard, color(colorsSelected.p1col), color(colorsSelected.p2col), colorsSelected.p1name, colorsSelected.p2name, STATES.PLAYINGGAME, false);
 		}
 
 	} else if (preGameMainMenu.isInside(x, y)) {
-		reset(mainBoard, playerOne.color, playerTwo.color, STATES.MAINMENU, aiPlaying);
+		p1input.hide();
+		p2input.hide();
+		reset(mainBoard, playerOne.color, playerTwo.color, playerOne.name, playerTwo.name, STATES.MAINMENU, aiPlaying);
 
 	} else {
 		checkButtonPallet(x, y);
@@ -98,14 +126,19 @@ function drawPlayerOneSide() {
 	fill(255);
 	textAlign(LEFT);
 	textSize(30);
-	text("Player One", 80, 150);
+	text(p1input.value(), 80, 150);
 	stroke(255);
 	line(20, 160, 280, 160);
+
 	textSize(25);
 	noStroke();
-	//text("Customize name: ", 50, 230);
-	// TODO: Get text from field
+	text("Enter name: ", 50, 200);
+
 	text("Choose color", 50, 300);
+	fill(0);
+	let left = buttonPalletLeft[0];
+	let right = buttonPalletLeft[11];
+	rect(left.x - left.size / 2 - 15, left.y - left.size / 2 - 15, right.x - left.x + right.size + 30, right.y - left.y + right.size + 30, 30);
 	drawColorPallet(buttonPalletLeft);
 	pop();
 }
@@ -119,15 +152,20 @@ function drawPlayerTwoSide() {
 	if (GAMESTATE === STATES.PREGAMEAI) {
 		text("Computer", width - 80 - textWidth("Computer"), 150);
 	} else {
-		text("Player Two", width - 80 - textWidth("Player Two"), 150);
+		text(p2input.value(), width - 80 - textWidth("Player Two"), 150);
 	}
 	stroke(255);
 	line(width - 20, 160, width - 280, 160);
 	textSize(25);
 	noStroke();
-	//text("Customize name: ", width - 60 - textWidth("Customize name:"), 230);
-	// TODO: Get text from field
+	if (GAMESTATE === STATES.PREGAME) {
+		text("Enter name: ", width - 60 - textWidth("Customize name:"), 200);
+	}
 	text("Choose color", width - 108 - textWidth("Choose color"), 300);
+	fill(0);
+	let left = buttonPalletRight[0];
+	let right = buttonPalletRight[11];
+	rect(left.x - left.size / 2 - 15, left.y - left.size / 2 - 15, right.x - left.x + right.size + 30, right.y - left.y + right.size + 30, 30);
 	drawColorPallet(buttonPalletRight);
 	pop();
 }
@@ -149,17 +187,17 @@ function createButtonPallet(x, y, pallet) {
 			offset = 0;
 			vSpace += 100;
 		}
-		pallet.push(new ButtonPallet(offset * hSpace + x, y + vSpace, buttonSize, (color(42, 111, 221))));
+		pallet.push(new ButtonPallet(offset * hSpace + x, y + vSpace, buttonSize, (color(239, 239, 239))));
 		offset++;
 	}
-	pallet[0].col = color(244, 66, 66);
-	pallet[1].col = color(234, 80, 37);
+	pallet[0].col = color(238, 25, 6);
+	pallet[1].col = color(238, 122, 6);
 	pallet[2].col = color(124, 130, 14);
-	pallet[3].col = color(145, 201, 14);
+	pallet[3].col = color(103, 70, 6);
 	pallet[4].col = color(55, 168, 6);
-	pallet[5].col = color(3, 140, 153);
-	pallet[6].col = color(19, 16, 206);
-	pallet[7].col = color(102, 3, 183);
+	pallet[5].col = color(12, 201, 185);
+	pallet[6].col = color(28, 28, 236);
+	pallet[7].col = color(93, 40, 173);
 	pallet[8].col = color(183, 3, 165);
 	pallet[9].col = color(145, 145, 145);
 	pallet[10].col = color(244, 185, 66);
