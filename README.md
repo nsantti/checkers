@@ -48,7 +48,7 @@ This is classic checkers with an interactive UI. ***NOTE*** Uses the p5js librar
 
 ### Updates made
 - 7/30/18
-  - Fixed bug with AI where user could move the AI before the AI takes its turn
+  - Fixed bug where user could move the AI before the AI takes its turn
   - Code refactoring
     - Removed unused code
     - Implemented 'builder pattern' for NButton and GameSquare class
