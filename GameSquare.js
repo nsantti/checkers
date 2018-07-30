@@ -1,23 +1,83 @@
 class GameSquare {
-	constructor(owner, ownerN, i, j, x, y, r, g, b) {
-		this.owner = owner; // Our owner is a player object
-		this.ownerN = ownerN; // OwnerN is 0 for no owner, 1 for playerOne, and 2 for playerTwo
-		this.row = i;
-		this.col = j;
-		this.piece = null; // We don't have any pieces on us to start
-		this.pos = createVector(x, y);
-		this.size = 80;
-		this.r = r;
-		this.g = g;
-		this.b = b;
+	constructor(builder) {
+		this.owner = builder.owner; // Our owner is a player object
+		this.ownerN = builder.ownerN; // OwnerN is 0 for no owner, 1 for playerOne, and 2 for playerTwo
+		this.row = builder.row;
+		this.col = builder.col;
+		this.piece = builder.piece; // We don't have any pieces on us to start
+		this.pos = createVector(builder.x, builder.y);
+		this.size = builder.size;
+		this.r = builder.color.levels[0];
+		this.g = builder.color.levels[1];
+		this.b = builder.color.levels[2];
 		this.inside = false; // Is the mouse inside our square
 		this.highlight = false; // Should we highlight the square? Used for highlighting neighbors
 		this.neighbors = []; // The legal places we can move to
-		this.king = false; // Tells us if we are a king
+		this.king = builder.king; // Tells us if we are a king
 		this.jumps = []; // Tells us the jumps we can do
-		this.mustJump = false; // Tells us if we must jump
+		this.mustJump = builder.mustJump; // Tells us if we must jump
 		this.displayText = false; // Should we show the board location?
 		this.showArrows = false; // Should we show all legal moves?
+	}
+
+	static get buildSquare() {
+		class Builder {
+			constructor() {
+				this.owner = null;
+				this.ownerN = 0;
+				this.piece = null;
+				this.size = 80;
+				this.king = false;
+				this.mustJump = false;
+				return this;
+			}
+			withOwner(owner) {
+				this.owner = owner;
+				return this;
+			}
+			withOwnerN(ownerN) {
+				this.ownerN = ownerN;
+				return this;
+			}
+			withRow(row) {
+				this.row = row;
+				return this;
+			}
+			withColumn(col) {
+				this.col = col;
+				return this;
+			}
+			withPos(x, y) {
+				this.x = x;
+				this.y = y;
+				return this;
+			}
+			withColor(r, g, b) {
+				this.color = color(r, g, b);
+				return this;
+			}
+			withPiece(piece) {
+				this.piece = piece;
+				return this;
+			}
+			withSize(size) {
+				this.size = size;
+				return this;
+			}
+			withKing(bool) {
+				this.king = bool;
+				return this;
+			}
+			withMustJump(bool) {
+				this.mustJump = bool;
+				return this;
+			}
+			build() {
+				return new GameSquare(this);
+			}
+
+		}
+		return Builder;
 	}
 
 	hasPiece() {
@@ -25,11 +85,17 @@ class GameSquare {
 	}
 
 	copy() {
-		let ret = new GameSquare(this.owner, this.ownerN, this.row, this.col, this.pos.x, this.pos.y, this.r, this.g, this.b);
-		ret.piece = this.piece;
-		ret.size = this.size;
-		ret.king = this.king;
-		ret.mustJump = this.mustJump;
+		let ret = new GameSquare.buildSquare()
+			.withOwner(this.owner)
+			.withOwnerN(this.ownerN)
+			.withRow(this.row)
+			.withColumn(this.col)
+			.withPos(this.pos.x, this.pos.y)
+			.withColor(this.r, this.g, this.b)
+			.withPiece(this.piece)
+			.withKing(this.king)
+			.withMustJump(this.mustJump)
+			.build();
 		return ret;
 	}
 
@@ -69,6 +135,8 @@ class GameSquare {
 		}
 		return ret;
 	}
+
+
 }
 
 
@@ -94,7 +162,7 @@ GameSquare.prototype.show = function() {
 
 	if (this.piece) { // Draws a circle if there is a piece there
 		fill(this.owner.color);
-		ellipse(this.pos.x + this.size / 2, this.pos.y + this.size / 2, 30, 30);
+		ellipse(this.pos.x + this.size / 2, this.pos.y + this.size / 2, this.piece.size, this.piece.size);
 	}
 	if (this.king) { // Draws a dot in the center of the circle if we are a king
 		fill(0);
@@ -238,39 +306,25 @@ GameSquare.prototype.reset = function() {
 
 // Will highlight each neighbor of a particular square
 GameSquare.prototype.highlightNeighbors = function() {
-	for (var i = 0; i < this.neighbors.length; i++) {
-		this.neighbors[i].highlightSquare();
-	}
 	this.arrow = true;
 }
 
 GameSquare.prototype.highLightJumps = function() {
-	for (let i = 0; i < this.jumps.length; i++) {
-		this.jumps[i].highlightSquare();
-	}
 	this.arrow = true;
 }
 
 GameSquare.prototype.unHighlightNeighbors = function() {
-	for (var i = 0; i < this.neighbors.length; i++) {
-		this.neighbors[i].unHighlightSquare();
-	}
 	this.arrow = false;
 }
 
 GameSquare.prototype.unHighLightJumps = function() {
-	for (let i = 0; i < this.jumps.length; i++) {
-		this.jumps[i].unHighlightSquare();
-	}
 	this.arrow = false;
 }
 
 GameSquare.prototype.highlightSquare = function() {
-	//this.highlight = true;
 	this.showArrows = true;
 }
 
 GameSquare.prototype.unHighlightSquare = function() {
-	//	this.highlight = false;
 	this.showArrows = false;
 }

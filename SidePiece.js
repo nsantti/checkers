@@ -5,7 +5,7 @@ class SidePiece {
 		this.pos = ((owner == playerOne) ? createVector(40, index * 50 + 120) : createVector(width - 40, height - index * 50 - 120));
 		this.index = index;
 		this.king = king;
-		this.size = 30;
+		this.size = 40;
 	}
 
 	// The player object keeps track of all the captured pieces. This will show the captured piece

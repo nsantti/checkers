@@ -1,7 +1,13 @@
 let howToMainMenu; // Button to return to the main menu
 
 function initHowTo() {
-	howToMainMenu = new NButton("Main Menu", width - 200, 25, 150, 75, false, 25);
+	howToMainMenu = new NButton.buttonBuilder()
+		.withText("Main Menu")
+		.withPos(width - 200, 25)
+		.withWidth(150)
+		.withHeight(75)
+		.withTextSize(25)
+		.build();
 }
 
 function drawHowTo() {

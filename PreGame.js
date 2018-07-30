@@ -7,8 +7,20 @@ let p1input; // Input field for player to enter their name
 let p2input; // Input field for player to enter their name
 
 function initPreGame() {
-	startButton = new NButton("Start", width / 2 - 75, height - 100, 150, 75, false, 25);
-	preGameMainMenu = new NButton("Main Menu", 50, height - 100, 150, 75, false, 25);
+	startButton = new NButton.buttonBuilder()
+		.withText("Start")
+		.withPos(width / 2 - 75, height - 100)
+		.withWidth(150)
+		.withHeight(75)
+		.withTextSize(25)
+		.build();
+	preGameMainMenu = new NButton.buttonBuilder()
+		.withText("Main Menu")
+		.withPos(50, height - 100)
+		.withWidth(150)
+		.withHeight(75)
+		.withTextSize(25)
+		.build();
 	buttonPalletLeft = [];
 	buttonPalletRight = [];
 	createButtonPallet(50, 250, buttonPalletLeft);

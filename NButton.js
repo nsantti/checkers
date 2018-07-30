@@ -1,12 +1,66 @@
 class NButton {
-	constructor(text, x, y, w, h, hide, size) {
-		this.text = text; // What does the button say?
-		this.pos = createVector(x, y); // Where is the button?
-		this.w = w; // How wide is the button?
-		this.h = h; // How tall is the button?
-		this.color = color(255);
-		this.hide = hide; // Should we show the button?
-		this.size = size || 14;
+
+	constructor(builder) {
+		this.text = builder.text;
+		this.pos = createVector(builder.x, builder.y);
+		this.w = builder.width;
+		this.h = builder.height;
+		this.color = builder.color;
+		this.hide = builder.hide;
+		this.size = builder.size;
+	}
+
+	static get buttonBuilder() {
+		class Builder {
+			constructor() {
+				this.color = color(255);
+				this.hide = false;
+				this.size = 14;
+			}
+
+			withText(text) {
+				this.text = text;
+				return this;
+			}
+
+			withPos(x, y) {
+				this.x = x;
+				this.y = y;
+				return this;
+			}
+
+			withWidth(w) {
+				this.width = w;
+				return this;
+			}
+
+			withHeight(h) {
+				this.height = h;
+				return this;
+			}
+
+			withColor(r, g = 0, b = 0) {
+				this.color = color(r, g, b);
+				return this;
+			}
+
+			hidden(bool) {
+				this.hide = bool;
+				return this;
+			}
+
+			withTextSize(size) {
+				this.size = size;
+				return this;
+			}
+
+			build() {
+				return new NButton(this);
+			}
+
+
+		}
+		return Builder;
 	}
 
 	show() {

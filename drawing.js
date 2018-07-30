@@ -6,8 +6,22 @@ let counter; // My own framerate variable
 function initVariables() {
 	counter = 0;
 	endingButtons = [];
-	endingButtons.push(playAgain = new NButton("Play Again", width - (8 * w) + w / 2, h + 75 * 6, 120, 55, true));
-	endingButtons.push(mainMenu = new NButton("Main Menu", width - (4 * w), h + 75 * 6, 120, 55, true));
+	playAgain = new NButton.buttonBuilder()
+		.withText("Play Again")
+		.withPos(width - (8 * w) + w / 2, h + 75 * 6)
+		.withWidth(120)
+		.withHeight(55)
+		.hidden(true)
+		.build();
+	mainMenu = new NButton.buttonBuilder()
+		.withText("Main Menu")
+		.withPos(width - (4 * w), h + 75 * 6)
+		.withWidth(120)
+		.withHeight(55)
+		.hidden(true)
+		.build();
+	endingButtons.push(playAgain);
+	endingButtons.push(mainMenu);
 }
 
 function draw() {
