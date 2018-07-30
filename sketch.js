@@ -75,17 +75,47 @@ function reset(callback, p1color = color(145), p2color = color(244, 185, 66), p1
 	computerPlayButton = undefined;
 
 
-	liveButtons.push(toggleNumberButton = new NButton("Numbers", 5, height, 70, 50, false));
-	liveButtons.push(resetButton = new NButton("Reset", width - 75, 10, 70, 50, false));
-	liveButtons.push(undoButton = new NButton("Undo", width - 75, 70, 70, 50, false));
-	liveButtons.push(randomMoveButton = new NButton("Make a random move", width / 2 - 320, 10, 160, 50, false));
-	liveButtons.push(mainMenuButton = new NButton("Main\nMenu", 5, 10, 70, 50, false));
+	liveButtons.push(toggleNumberButton = new NButton.buttonBuilder()
+		.withText("Numbers")
+		.withPos(5, height)
+		.withWidth(70)
+		.withHeight(50)
+		.build());
+	liveButtons.push(resetButton = new NButton.buttonBuilder()
+		.withText("Reset")
+		.withPos(width - 75, 10)
+		.withWidth(70)
+		.withHeight(50)
+		.build());
+	liveButtons.push(undoButton = new NButton.buttonBuilder()
+		.withText("Undo")
+		.withPos(width - 75, 70)
+		.withWidth(70)
+		.withHeight(50)
+		.build());
+	liveButtons.push(randomMoveButton = new NButton.buttonBuilder()
+		.withText("Make a random move")
+		.withPos(width / 2 - 320, 10)
+		.withWidth(160)
+		.withHeight(50)
+		.build());
+	liveButtons.push(mainMenuButton = new NButton.buttonBuilder()
+		.withText("Main\nMenu")
+		.withPos(5, 10)
+		.withWidth(70)
+		.withHeight(50)
+		.build());
 
 	for (let i = 0; i < cols; i++) {
 		board[i] = new Array(rows);
 	}
 	// Creating the button to show all legal moves for current player
-	liveButtons.push(showMovesButton = new NButton("Show Current Player moves", width / 2 - 100, 10, 200, 50, false));
+	liveButtons.push(showMovesButton = new NButton.buttonBuilder()
+		.withText("Show Current Player moves")
+		.withPos(width / 2 - 100, 10)
+		.withWidth(200)
+		.withHeight(50)
+		.build());
 
 	playerOne = new Player(p1color, p1name);
 	//playerTwo = new Player(p2color, p2name);
@@ -93,7 +123,12 @@ function reset(callback, p1color = color(145), p2color = color(244, 185, 66), p1
 		//playerOne = new AI(p1color, "Computer", population[populationIndex].weights);
 		playerTwo = new AI(p2color, "Computer", population[populationIndex].weights);
 	} else {
-		liveButtons.push(computerPlayButton = new NButton("Toggle computer play", width / 2 + 160, 10, 160, 50, false));
+		liveButtons.push(computerPlayButton = new NButton.buttonBuilder()
+			.withText("Toggle computer play")
+			.withPos(width / 2 + 160, 10)
+			.withWidth(160)
+			.withHeight(50)
+			.build());
 
 		playerTwo = new Player(p2color, p2name);
 		//playerOne = new Player(p1color, p1name);
@@ -105,9 +140,16 @@ function reset(callback, p1color = color(145), p2color = color(244, 185, 66), p1
 	// Creating the squares
 	for (let i = 0; i < cols; i++) {
 		for (let j = 0; j < rows; j++) {
-			board[i][j] = ((i + j) % 2 === 0) ?
-				new GameSquare(null, 0, i, j, j * w + (width - (8 * w)) / 2, i * h + 75, 215, 0, 0) :
-				new GameSquare(null, 0, i, j, j * w + (width - (8 * w)) / 2, i * h + 75, 0, 0, 0);
+			let theSquare = new GameSquare.buildSquare()
+				.withRow(i)
+				.withColumn(j)
+				.withPos(j * w + (width - (8 * w)) / 2, i * h + 75);
+			if ((i + j) % 2 === 0) {
+				theSquare.withColor(215, 0, 0)
+			} else {
+				theSquare.withColor(0, 0, 0);
+			}
+			board[i][j] = theSquare.build();
 		}
 	}
 	initVariables();
@@ -130,6 +172,7 @@ function reset(callback, p1color = color(145), p2color = color(244, 185, 66), p1
 	//  board7(); // Works
 	generateMoves();
 }
+
 
 function createPopulation() {
 	population = [];
@@ -174,6 +217,7 @@ function mousePressed() {
 		hideCurrentMoves();
 		checkButtons(mouseX, mouseY);
 		// Check if we are inside the gameboard
+		if (aiPlaying && getCurrentPlayer() === playerTwo) return;
 		if (isInBounds(mouseX, mouseY)) {
 			// If we are, highlight the legal moves of the square we are on
 			currentSquare = getSquare(mouseX, mouseY);

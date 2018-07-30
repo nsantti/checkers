@@ -3,9 +3,27 @@ let playComputerButton; // Button to start game against computer
 let howToButton; // Button for the game rules
 
 function initStartScreen() {
-	playAloneButton = new NButton("Play with a\r\nfriend", width / 2 - 300, height / 2, 200, 100, false, 25);
-	playComputerButton = new NButton("Play against the\r\ncomputer", width / 2 + 100, height / 2, 200, 100, false, 25);
-	howToButton = new NButton("How to Play", width / 2 - 100, height - 200, 200, 100, false, 25);
+	playAloneButton = new NButton.buttonBuilder()
+		.withText("Play with a\r\nfriend")
+		.withPos(width / 2 - 300, height / 2)
+		.withWidth(200)
+		.withHeight(100)
+		.withTextSize(25)
+		.build();
+	playComputerButton = new NButton.buttonBuilder()
+		.withText("Play against\r\nthe computer")
+		.withPos(width / 2 + 100, height / 2)
+		.withWidth(200)
+		.withHeight(100)
+		.withTextSize(25)
+		.build();
+	howToButton = new NButton.buttonBuilder()
+		.withText("How to Play")
+		.withPos(width / 2 - 100, height - 200)
+		.withWidth(200)
+		.withHeight(100)
+		.withTextSize(25)
+		.build();
 }
 
 function drawStartScreen() {
@@ -37,7 +55,7 @@ function drawMadeBy() {
 	push();
 	fill(235);
 	textSize(20);
-	text("Created by Nate Santti", 20, height - 20);
+	text("Created by Nate Santti\t\t Last updated 7/30/18", 20, height - 20);
 	pop();
 }
 

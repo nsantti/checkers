@@ -47,6 +47,15 @@ This is classic checkers with an interactive UI. ***NOTE*** Uses the p5js librar
 - Let the player select difficulty for AI (easy is random, hard is smart AI)
 
 ### Updates made
+- 7/30/18
+  - Fixed bug with AI where user could move the AI before the AI takes its turn
+  - Code refactoring
+    - Removed unused code
+    - Implemented 'builder pattern' for NButton and GameSquare class
+  - Made the game pieces larger
+
+
+&nbsp;
 - 7/11/18
   - Made AI capable of playing as either player
   - Updated color options
