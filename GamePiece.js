@@ -3,7 +3,6 @@ class GamePiece {
 		this.owner = owner;
 		this.size = size;
 	}
-
 }
 
 GamePiece.prototype.showLegalMoves = function(square, board) {

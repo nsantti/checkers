@@ -9,7 +9,7 @@ class Player {
 		this.capturedPieces = []; // A list of pieces the player has captured
 	}
 
-	canAccess(row, col) {
+	canAccess(row, col) { // I know I can make this one line. I had console.logs for true or false
 		if (row >= 0 && row < 8 && col >= 0 && col < 8) {
 			return true;
 		} else {
@@ -17,11 +17,15 @@ class Player {
 		}
 	}
 
+	static canAccess(row, col) {
+		return (row >= 0 && row < 8 && col >= 0 && col < 8);
+	}
+
 	// Tells us if the player must jump
 	mustJump(board) {
-		for (let i = 0; i < board.length; i++) {
-			for (let j = 0; j < board[i].length; j++) {
-				if (board[i][j].owner == this && board[i][j].mustJump) {
+		for (let row of board) {
+			for (let square of row) {
+				if (square.owner === this && square.mustJump) {
 					return true;
 				}
 			}
@@ -40,18 +44,18 @@ class Player {
 
 	// Draws all of the captured pieces
 	drawCaptured() {
-		for (let i = 0; i < this.capturedPieces.length; i++) {
-			this.capturedPieces[i].show();
+		for (let captured of this.capturedPieces) {
+			captured.show();
 		}
 	}
 
 	canMove(board) {
-		for (let i = 0; i < board.length; i++) {
-			for (let j = 0; j < board[i].length; j++) {
-				if (board[i][j].owner !== this) {
+		for (let row of board) {
+			for (let square of row) {
+				if (square.owner !== this) {
 					continue;
 				}
-				if (board[i][j].neighbors.length > 0 || board[i][j].jumps.length > 0) {
+				if (square.neighbors.length > 0 || square.jumps.length > 0) {
 					return true;
 				}
 			}
@@ -61,10 +65,10 @@ class Player {
 
 	squaresOwned(board) {
 		let owned = [];
-		for (let i = 0; i < board.length; i++) {
-			for (let j = 0; j < board[i].length; j++) {
-				if (board[i][j].owner === this) {
-					owned.push(board[i][j]);
+		for (let row of board) {
+			for (let square of row) {
+				if (square.owner === this) {
+					owned.push(square);
 				}
 			}
 		}
@@ -74,30 +78,21 @@ class Player {
 	getAllMoves() {
 		let allMoves = this.squaresOwned(board);
 		let theMoves = [];
+		// Adding all possible moves to the list
+		for (let move of allMoves) {
+			if (move.neighbors.length > 0) {
+				for (let dest of move.neighbors) {
+					theMoves.push({
+						from: move,
+						to: dest,
+						score: 0
+					});
+				}
+			}
+		}
+		// If we have to jump, only keep the jumping moves
 		if (this.mustJump(board)) {
-			for (let move of allMoves) {
-				if (move.jumps.length > 0) {
-					for (let dest of move.jumps) {
-						theMoves.push({
-							from: move,
-							to: dest,
-							score: 0
-						});
-					}
-				}
-			}
-		} else {
-			for (let move of allMoves) {
-				if (move.neighbors.length > 0) {
-					for (let dest of move.neighbors) {
-						theMoves.push({
-							from: move,
-							to: dest,
-							score: 0
-						});
-					}
-				}
-			}
+			theMoves = theMoves.filter(x => abs((x.from.row - x.to.row)) > 1);
 		}
 		return theMoves;
 	}
