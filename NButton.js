@@ -57,8 +57,6 @@ class NButton {
 			build() {
 				return new NButton(this);
 			}
-
-
 		}
 		return Builder;
 	}

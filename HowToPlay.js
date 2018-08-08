@@ -46,7 +46,6 @@ function drawRules() {
 	text("-   A player wins the game when they capture all of their opponent's pieces", 25, 125 + spacing * offset++);
 	text("-   A player wins if the other player cannot move", 25, 125 + spacing * offset++);
 	text("-   Once 200 moves are reached, the game is considered a TIE, and ends", 25, 125 + spacing * offset++);
-
 	pop();
 }
 

@@ -14,7 +14,6 @@ class GameMove {
 		this.to.ownerN = this.from.ownerN;
 		this.to.mustJump = false;
 		this.to.showArrows = false;
-
 		this.checkForKing();
 
 		// Making the from square empty
@@ -50,12 +49,10 @@ class GameMove {
 			let isKing = otherOwner.removeCaptured();
 			square.king = isKing.king;
 			theOwner.pieces.push(square.piece);
-
 		}
-
 	}
 
-	transferVariables(f, t) {
+	transferVariables(f, t) { // (f)rom and (t)o
 		f.owner = t.owner;
 		f.ownerN = t.ownerN;
 		f.row = t.row;

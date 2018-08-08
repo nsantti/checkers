@@ -1,10 +1,10 @@
 let playAgain; // Button to play again the game is over
 let mainMenu; // Button to return to the main menu when the game is over
 let endingButtons; // Data structure to hold the ending buttons
-let counter; // My own framerate variable
+let frameCounter; // My own framerate variable
 
 function initVariables() {
-	counter = 0;
+	frameCounter = 0;
 	endingButtons = [];
 	playAgain = new NButton.buttonBuilder()
 		.withText("Play Again")
@@ -25,7 +25,6 @@ function initVariables() {
 }
 
 function draw() {
-
 	background(50);
 	if (GAMESTATE === STATES.MAINMENU) {
 		drawStartScreen();
@@ -44,7 +43,7 @@ function draw() {
 
 		drawPlayerTurn();
 
-		if (frameCount % 1 === 0 && !gameOver && watchComputerPlay) {
+		if (!gameOver && watchComputerPlay) {
 			makeRandomMove();
 		}
 		if (simulate) {
@@ -67,10 +66,10 @@ function draw() {
 		}
 
 		if (getCurrentPlayer() === playerTwo) {
-			counter++;
-			if (!gameOver && counter > (simulate ? 0 : 60) && typeof getCurrentPlayer().move !== 'undefined' && !watchComputerPlay) {
+			frameCounter++;
+			if (!gameOver && frameCounter > (simulate ? 0 : 60) && typeof getCurrentPlayer().move !== 'undefined' && !watchComputerPlay) {
 				getCurrentPlayer().move();
-				counter = 0;
+				frameCounter = 0;
 			}
 		} else if (simulate && !gameOver && getCurrentPlayer() === playerOne) {
 			makeRandomMove();
@@ -80,20 +79,20 @@ function draw() {
 
 
 function drawArrowMoves() {
-	for (let i = 0; i < cols; i++) {
-		for (let j = 0; j < rows; j++) {
-			board[i][j].showMoves();
+	for (let row of board) {
+		for (let square of row) {
+			square.showMoves();
 		}
 	}
 }
 
 function drawBoard() { // Draw the board
-	for (let i = 0; i < cols; i++) {
-		for (let j = 0; j < rows; j++) {
-			board[i][j].show();
-			board[i][j].showText();
+	for (let row of board) {
+		for (let square of row) {
+			square.show();
+			square.showText();
 			if (!gameOver) {
-				board[i][j].checkInside(mouseX, mouseY);
+				square.checkInside(mouseX, mouseY);
 			}
 		}
 	}
@@ -101,9 +100,9 @@ function drawBoard() { // Draw the board
 
 // Draws all of the buttons
 function drawButtons(anArray) {
-	for (let i = 0; i < anArray.length; i++) {
-		anArray[i].show();
-		anArray[i].isInside(mouseX, mouseY);
+	for (let item of anArray) {
+		item.show();
+		item.isInside(mouseX, mouseY);
 	}
 }
 
@@ -116,7 +115,7 @@ function drawPlayerTurn() { // Draws the player's turn at the bottom of the scre
 		let player = getCurrentPlayer().name;
 		text(player + "\'s Turn", width / 2, height - 10);
 	} else {
-		endingButtons.map(theBut => theBut.hide = false);
+		endingButtons.map(b => b.hide = false);
 		drawEndingScreen();
 	}
 
@@ -152,9 +151,7 @@ function drawEndingScreen() {
 	noStroke();
 	fill(255);
 	textSize(30);
-
 	text(message, width / 2, h + 75 * 2);
-
 	textSize(24);
 	textAlign(LEFT);
 	text("Total Moves: " + moves.length, width / 2 - w * 2.5, h + 75 * 3);
@@ -162,14 +159,11 @@ function drawEndingScreen() {
 	text(playerTwo.name + " pieces lost: " + playerOne.capturedPieces.length, width / 2 - w * 2.5, h + 75 * 5);
 	if (!simulate) {
 		drawButtons(endingButtons);
-
 	}
 	pop();
 	if (simulate) {
 		gameCount++;
-
 	}
-
 }
 
 function drawArrow() { // Draws the arrow to show previous turn
@@ -222,23 +216,22 @@ function drawArrowFromTo(from, to, col = color(255)) {
 
 // Shows all possible legal moves for the current player
 function showCurrentMoves() {
-	for (let i = 0; i < board.length; i++) {
-		for (let j = 0; j < board[i].length; j++) {
+	for (let row of board) {
+		for (let square of row) {
 			// If the square belongs to the current player
-			if (board[i][j].owner === getCurrentPlayer()) {
+			if (square.owner === getCurrentPlayer()) {
 				// ... and they must jump
 				if (currentPlayer.mustJump(board)) {
 					// Show the possible jumps if we should be highlighting
-					if (board[i][j].mustJump) {
-						board[i][j].showArrows = true;
+					if (square.mustJump) {
+						square.showArrows = true;
 					}
 				} else {
 					// Otherwise show the moves that aren't jumps
-					board[i][j].showArrows = true;
+					square.showArrows = true;
 				}
 			}
 		}
-
 	}
 }
 
@@ -246,9 +239,9 @@ function showCurrentMoves() {
 // Hides all the moves on the board
 function hideCurrentMoves() {
 	showingCurrentMoves = false;
-	for (let i = 0; i < board.length; i++) {
-		for (let j = 0; j < board[i].length; j++) {
-			board[i][j].showArrows = false;
+	for (let row of board) {
+		for (let square of row) {
+			square.showArrows = false;
 		}
 	}
 }

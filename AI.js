@@ -1,7 +1,7 @@
 class AI extends Player {
 	constructor(color, name, weights) {
 		super(color, name);
-		//[5, -4, -2, 0.5, 1, 0.5] default weights
+		//[5, -4, -2, 0.5, 1, 0.5, 4] //default weights used for evolving
 		this.weights = weights;
 		this.results = {
 			won: 0,
@@ -22,18 +22,27 @@ class AI extends Player {
 		}
 		// If we can cover up a potential jump, do it.
 		otherPlayerMoves = otherPlayerMoves.filter(square => square.jumps.length > 0);
-		for (let i = 0; i < otherPlayerMoves.length; i++) {
-			for (let j = 0; j < otherPlayerMoves[i].jumps.length; j++) {
-				for (let k = 0; k < possibleMoves.length; k++) {
-					if (possibleMoves[k].to === otherPlayerMoves[i].jumps[j]) {
-						possibleMoves[k].score += this.weights[6];
+		// for (let i = 0; i < otherPlayerMoves.length; i++) {
+		// 	for (let j = 0; j < otherPlayerMoves[i].jumps.length; j++) {
+		// 		for (let k = 0; k < possibleMoves.length; k++) {
+		// 			if (possibleMoves[k].to === otherPlayerMoves[i].jumps[j]) {
+		// 				possibleMoves[k].score += this.weights[6];
+		// 			}
+		// 		}
+		// 	}
+		// }
+
+		for (let otherMoves of otherPlayerMoves) {
+			for (let theirJump of otherMoves.jumps) {
+				for (let myMove of possibleMoves) {
+					if (myMove.to === theirJump) {
+						myMove.score += this.weights[6];
 					}
 				}
 			}
 		}
-		this.pMoves = possibleMoves;
 
-		//console.log("Player Two: ", possibleMoves);
+		this.pMoves = possibleMoves;
 
 		// Make the move with the highest score
 		let theMove = this.getBestMove(possibleMoves);
@@ -55,9 +64,10 @@ class AI extends Player {
 			score += this.weights[1];
 			safe = false;
 		}
+
 		// Will another piece be jumped if this moves?
-		for (let i = 0; i < immediateNeighbors.length; i++) {
-			if (this.willBeJumped(immediateNeighbors[i])) {
+		for (let neighbor of immediateNeighbors) {
+			if (this.willBeJumped(neighbor)) {
 				score += this.weights[2];
 				safe = false;
 			}
@@ -223,16 +233,17 @@ class AI extends Player {
 
 	getBestMove(arr) {
 		let highest = -100000;
-		for (let i = 0; i < arr.length; i++) {
-			if (arr[i].score > highest) {
-				highest = arr[i].score;
+
+		for (let move of arr) {
+			if (move.score > highest) {
+				highest = move.score;
 			}
 		}
 
 		let potentialMoves = [];
-		for (let i = 0; i < arr.length; i++) {
-			if (arr[i].score === highest) {
-				potentialMoves.push(arr[i]);
+		for (let move of arr) {
+			if (move.score === highest) {
+				potentialMoves.push(move);
 			}
 		}
 		return random(potentialMoves);

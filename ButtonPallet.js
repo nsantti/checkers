@@ -11,7 +11,6 @@ class ButtonPallet {
 	show() {
 		push();
 		fill(this.col);
-
 		if (this.inside || this.selected) {
 			stroke(0);
 			strokeWeight(3);
@@ -25,7 +24,6 @@ class ButtonPallet {
 			noStroke();
 			ellipse(this.x, this.y, this.size);
 		}
-
 		pop();
 	}
 

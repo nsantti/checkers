@@ -75,17 +75,15 @@ function checkButtonsPreGame(x, y) {
 		p2input.hide();
 		if (GAMESTATE === STATES.PREGAMEAI) {
 			aiPlaying = true;
-			reset(mainBoard, color(colorsSelected.p1col), color(colorsSelected.p2col), colorsSelected.p1name, colorsSelected.p2name, STATES.PLAYINGGAME, true);
 		} else {
 			aiPlaying = false;
-			reset(mainBoard, color(colorsSelected.p1col), color(colorsSelected.p2col), colorsSelected.p1name, colorsSelected.p2name, STATES.PLAYINGGAME, false);
 		}
+		reset(mainBoard, color(colorsSelected.p1col), color(colorsSelected.p2col), colorsSelected.p1name, colorsSelected.p2name, STATES.PLAYINGGAME, aiPlaying);
 
 	} else if (preGameMainMenu.isInside(x, y)) {
 		p1input.hide();
 		p2input.hide();
 		reset(mainBoard, playerOne.color, playerTwo.color, playerOne.name, playerTwo.name, STATES.MAINMENU, aiPlaying);
-
 	} else {
 		checkButtonPallet(x, y);
 	}
@@ -122,9 +120,9 @@ function checkButtonPallet(x, y) {
 }
 
 function colorUsedBy(color, other) {
-	for (let i = 0; i < other.length; i++) {
-		if (other[i].selected) {
-			if (other[i].col.levels.toString() === color.col.levels.toString()) {
+	for (let otherColor of other) {
+		if (otherColor.selected) {
+			if (otherColor.col.levels.toString() === color.col.levels.toString()) {
 				return true;
 			}
 		}
@@ -141,11 +139,9 @@ function drawPlayerOneSide() {
 	text(p1input.value(), 80, 150);
 	stroke(255);
 	line(20, 160, 280, 160);
-
 	textSize(25);
 	noStroke();
 	text("Enter name: ", 50, 200);
-
 	text("Choose color", 50, 300);
 	fill(0);
 	let left = buttonPalletLeft[0];
