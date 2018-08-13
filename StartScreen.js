@@ -27,13 +27,9 @@ function initStartScreen() {
 }
 
 function drawStartScreen() {
-	// Draw words
 	drawWords();
-	// Make button to play
 	drawStartButtons();
 	drawMadeBy();
-	// Make player one enter name and choose color
-	// Make player two enter name and choose color
 }
 
 function drawWords() {
@@ -55,7 +51,7 @@ function drawMadeBy() {
 	push();
 	fill(235);
 	textSize(20);
-	text("Created by Nate Santti\t\t Last updated 8/8/18", 20, height - 20);
+	text("Created by Nate Santti\t\t Last updated 8/13/18", 20, height - 20);
 	pop();
 }
 
