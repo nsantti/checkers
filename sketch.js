@@ -181,7 +181,9 @@ function createPopulation() { // Used this when evolving AI weights
 
 function setup() {
 	let cnv = createCanvas(800, 800);
-	cnv.position((windowWidth - width) / 2, (windowHeight - height) / 2);
+	cnv.parent('sketch-holder');
+	cnv.style('display', 'block');
+	//cnv.position((windowWidth - width) / 2, (windowHeight - height) / 2);
 	select('#webValidate').hide(); // This only disappears if the browser can load the sketch
 	createPopulation();
 	populationIndex = 0;
