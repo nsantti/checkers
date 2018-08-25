@@ -37,6 +37,7 @@ let gameCount; // How many games have we simulated?
 let population; // Population of AI's for genetic evolution
 let populationSize;
 let populationIndex;
+const PADDING = 25;
 
 
 
