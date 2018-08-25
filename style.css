@@ -1,0 +1,19 @@
+html, body {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  display: flex;
+
+
+}
+
+canvas {
+  position: absolute;
+  left: 400px;
+}
+
+#sketch-holder {
+
+}

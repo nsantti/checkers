@@ -51,7 +51,7 @@ function drawMadeBy() {
 	push();
 	fill(235);
 	textSize(20);
-	text("Created by Nate Santti\t\t Last updated 8/13/18", 20, height - 20);
+	text("Created by Nate Santti\t\t Last updated 8/25/18", 20, height - 20);
 	pop();
 }
 

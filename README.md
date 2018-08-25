@@ -47,6 +47,10 @@ This is classic checkers with an interactive UI. ***NOTE*** Uses the p5js librar
 - Let the player select difficulty for AI (easy is random, hard is smart AI)
 
 ### Updates made
+- 8/25/18
+  - Fixed positioning issue with Firefox and Edge
+
+&nbsp;
 - 8/13/18
   - Added a warning if the user is using an unsupported browser
   - Centered the game in the window
