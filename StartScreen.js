@@ -41,7 +41,7 @@ function drawWords() {
 	let offset = -140;
 	let message = "CHECKERS";
 	for (let i = 0; i < message.length; i++) {
-		(i % 2 === 0) ? fill(215, 0, 0): fill(0);
+		(i % 2 === 0) ? fill(215, 0, 0): fill(240);
 		text(message[i] + "", width / 2 + gap * i + offset, 80);
 	}
 	pop();

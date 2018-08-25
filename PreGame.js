@@ -26,12 +26,12 @@ function initPreGame() {
 	createButtonPallet(50, 250, buttonPalletLeft);
 	createButtonPallet(width - 50 - 4 * 50 - 3 * 4, 250, buttonPalletRight);
 	p1input = createInput('Player One');
-	p1input.position(width/2 + 55, + 220);
+	p1input.position(55 + 25, 25 + 220);
 	p1input.hide();
 	p1input.size(150, 40);
 	p1input.style('font-size', '20px');
 	p2input = createInput('Player Two');
-	p2input.position((width / 2) + width - 250, 220);
+	p2input.position(width - 250 + 25, 25 + 220);
 	p2input.hide();
 	p2input.size(150, 40);
 	p2input.style('font-size', '20px');

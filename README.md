@@ -49,6 +49,7 @@ This is classic checkers with an interactive UI. ***NOTE*** Uses the p5js librar
 ### Updates made
 - 8/25/18
   - Fixed positioning issue with Firefox and Edge
+  - Updated start screen colors
 
 &nbsp;
 - 8/13/18
